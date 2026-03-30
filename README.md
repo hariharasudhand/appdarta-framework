@@ -1,5 +1,8 @@
 # AppDarta Framework
 
+> **Beta**  
+> AppDarta is in active development. Early trials and feedback are welcome, but do not expect every workflow or command to be complete or production-ready yet.
+
 AppDarta Framework is the public product surface for AppDarta.
 
 The installable product is the **AppDarta Engine**:
