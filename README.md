@@ -1,13 +1,21 @@
 # AppDarta Framework
 
-AppDarta Framework is the public product surface for the AppDarta binary.
+AppDarta Framework is the public product surface for AppDarta.
+
+The installable product is the **AppDarta Engine**:
+
+- `darta`
+- `appdarta-spec`
+- `wasmtime-host`
+- framework UI shell
+- schemas, docs, and central config
 
 This repository is intentionally product-facing:
 
-- installation and release notes
-- tutorials and sample flows
+- install and release docs
+- architecture and lifecycle guides
 - vertical bootstrap guidance
-- links to versioned framework releases
+- links to versioned releases
 
 It is not the private source-of-truth repository.
 
@@ -20,39 +28,24 @@ AppDarta is a framework for building vertical agentic applications with:
 - centrally managed AI/codegen controls
 - business-scoped vertical implementations
 
-The framework binary is the product. Vertical projects consume framework releases and carry only business-scoped code and instance specs.
-
-## What You Install
-
-The AppDarta framework binary is the product. A framework release contains:
-
-- `darta`
-- `appdarta-spec`
-- `wasmtime-host`
-- framework UI shell
-- schemas and docs
-- framework config such as model registry
-
-Install a release, then work from inside a vertical project.
+Vertical projects consume AppDarta Engine releases and carry only business-scoped code and instance specs.
 
 ## Start Here
 
-If you want to try AppDarta quickly:
-
-1. install a framework release from this repo
-2. create a new project from [`appdarta-vertical-template`](https://github.com/hariharasudhand/appdarta-vertical-template)
-3. bootstrap the project against the required framework version
-4. move through `analyze`, `design`, `codegen`, `build`, and `run`
+1. Install an AppDarta Engine release from GitHub Releases.
+2. Create a new project from [`appdarta-vertical-template`](https://github.com/hariharasudhand/appdarta-vertical-template).
+3. Bootstrap the vertical against the required framework version.
+4. Move through `analyze`, `design`, `codegen`, `build`, and `run`.
 
 ## Quickstart
 
-1. Download a framework release from GitHub Releases.
-2. Install it under `APPDARTA_HOME`.
-3. Add `APPDARTA_HOME/bin` to `PATH`.
-4. Start from the public `appdarta-vertical-template`.
-5. Run:
-
 ```bash
+export APPDARTA_HOME="${APPDARTA_HOME:-$HOME/.appdarta}"
+export PATH="$APPDARTA_HOME/bin:$PATH"
+
+darta framework install --package /path/to/appdarta-framework
+
+cd /path/to/your-vertical
 darta project bootstrap
 darta doctor --skip-stack
 darta analyze inspect
@@ -60,27 +53,36 @@ darta design inspect
 darta design compare
 ```
 
-Then continue through the lifecycle:
+Then continue through:
 
-- `codegen`
-- `build`
-- `run`
-- `test`
-- `deploy`
+- `darta codegen plan --project .`
+- `darta build project`
+- `darta run project`
 
-## Why Developers Should Try It
+## Why Try It
 
 AppDarta is useful when you want:
 
-- a real framework binary instead of ad hoc prompts
+- a real installable engine instead of ad hoc prompt scripts
 - clear separation between framework control plane and vertical business scope
 - operator visibility into policies, decisions, orchestration, and runtime
 - one lifecycle from business use case to executable vertical project
 
-## Public Repositories
+## Architecture
 
-- `appdarta-framework`: framework product and release docs
-- `appdarta-vertical-template`: public starter vertical
+See [docs/architecture.md](docs/architecture.md).
+
+## Lifecycle
+
+See [docs/lifecycle.md](docs/lifecycle.md).
+
+## Tech Stack
+
+See [docs/tech-stack.md](docs/tech-stack.md).
+
+## Data Tanks
+
+See [docs/data-tanks.md](docs/data-tanks.md).
 
 ## Install
 

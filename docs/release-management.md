@@ -1,6 +1,6 @@
 # Release Management
 
-Framework releases are versioned and installed under:
+AppDarta Engine releases are versioned and installed under:
 
 - `APPDARTA_HOME/framework/releases/<version>`
 - `APPDARTA_HOME/framework/current`

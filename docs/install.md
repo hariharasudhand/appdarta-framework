@@ -2,7 +2,7 @@
 
 ## 1. Download a release
 
-Download a versioned framework release from GitHub Releases.
+Download a versioned AppDarta Engine release from GitHub Releases.
 
 ## 2. Install it under `APPDARTA_HOME`
 

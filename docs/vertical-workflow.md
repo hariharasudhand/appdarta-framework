@@ -1,6 +1,6 @@
 # Vertical Workflow
 
-A public vertical should depend on a framework release, not on framework source.
+A public vertical should depend on an AppDarta Engine release, not on framework source.
 
 Each vertical carries:
 
@@ -21,7 +21,7 @@ darta build project
 darta run project
 ```
 
-The framework binary owns:
+The central framework owns:
 
 - schemas
 - gateway
