@@ -186,12 +186,12 @@ download_and_extract_release() {
     exit 2
   fi
 
-  echo "Available AppDarta Engine releases:"
-  choose_release_asset "$releases_json"
+  echo "Available AppDarta Engine releases:" >&2
+  choose_release_asset "$releases_json" >&2
 
   local choice=""
   while :; do
-    printf "Select a release number or tag [1-%s]: " "$count"
+    printf "Select one of the listed releases by number or tag [1-%s]: " "$count" >&2
     read -r choice
     case "$choice" in
       '' )
