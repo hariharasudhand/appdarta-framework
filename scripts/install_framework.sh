@@ -116,7 +116,7 @@ for idx, release in enumerate(data[:5], start=1):
     name = release.get("name") or release.get("tag_name") or f"release-{idx}"
     tag = release.get("tag_name") or ""
     prerelease = " prerelease" if release.get("prerelease") else ""
-    print(f"{idx}. {name} ({tag}){prerelease}")
+    print(f"{idx}. {name} [{tag}]{prerelease}")
 PY
 }
 
@@ -139,10 +139,25 @@ import json, sys
 from pathlib import Path
 
 data = json.loads(Path(sys.argv[1]).read_text())
-choice = int(sys.argv[2]) - 1
-if choice < 0 or choice >= min(len(data), 5):
-    raise SystemExit("invalid release selection")
-release = data[choice]
+raw = sys.argv[2].strip()
+selected = None
+
+if raw.isdigit():
+    choice = int(raw) - 1
+    if choice < 0 or choice >= min(len(data), 5):
+        raise SystemExit("invalid release selection")
+    selected = data[choice]
+else:
+    for release in data[:5]:
+        tag = (release.get("tag_name") or "").strip()
+        normalized = tag[1:] if tag.startswith("v") else tag
+        if raw == tag or raw == normalized:
+            selected = release
+            break
+    if selected is None:
+        raise SystemExit("invalid release selection")
+
+release = selected
 assets = release.get("assets") or []
 for asset in assets:
     name = asset.get("name") or ""
@@ -176,20 +191,17 @@ download_and_extract_release() {
 
   local choice=""
   while :; do
-    printf "Select a release [1-%s]: " "$count"
+    printf "Select a release number or tag [1-%s]: " "$count"
     read -r choice
     case "$choice" in
       '' )
-        echo "Please enter a release number." >&2
-        ;;
-      *[!0-9]* )
-        echo "Please enter a numeric release number." >&2
+        echo "Please enter a release number or tag." >&2
         ;;
       * )
-        if [ "$choice" -ge 1 ] && [ "$choice" -le "$count" ]; then
+        if download_selected_release "$releases_json" "$choice" >/dev/null 2>&1; then
           break
         fi
-        echo "Selection must be between 1 and $count." >&2
+        echo "Selection must match one of the listed release numbers or tags." >&2
         ;;
     esac
   done
