@@ -46,7 +46,7 @@ Vertical projects consume AppDarta Engine releases and carry only business-scope
 export APPDARTA_HOME="${APPDARTA_HOME:-$HOME/.appdarta}"
 export PATH="$APPDARTA_HOME/bin:$PATH"
 
-darta framework install --package /path/to/appdarta-framework
+bash scripts/install_framework.sh
 
 cd /path/to/your-vertical
 darta project bootstrap
