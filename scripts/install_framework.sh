@@ -120,6 +120,17 @@ for idx, release in enumerate(data[:5], start=1):
 PY
 }
 
+release_count() {
+  local releases_json="$1"
+  python3 - "$releases_json" <<'PY'
+import json, sys
+from pathlib import Path
+
+data = json.loads(Path(sys.argv[1]).read_text())
+print(min(len(data), 5))
+PY
+}
+
 download_selected_release() {
   local releases_json="$1"
   local choice="$2"
@@ -152,10 +163,36 @@ download_and_extract_release() {
   local releases_json="$tmp_root/releases.json"
   curl -fsSL "$api_base/releases?per_page=5" -o "$releases_json"
 
+  local count
+  count="$(release_count "$releases_json")"
+  if [ "$count" -eq 0 ]; then
+    echo "No published AppDarta Engine releases were found for $repo_slug." >&2
+    echo "A maintainer needs to publish a release asset first, or install from a local package directory." >&2
+    exit 2
+  fi
+
   echo "Available AppDarta Engine releases:"
   choose_release_asset "$releases_json"
-  printf "Select a release [1-5]: "
-  read -r choice
+
+  local choice=""
+  while :; do
+    printf "Select a release [1-%s]: " "$count"
+    read -r choice
+    case "$choice" in
+      '' )
+        echo "Please enter a release number." >&2
+        ;;
+      *[!0-9]* )
+        echo "Please enter a numeric release number." >&2
+        ;;
+      * )
+        if [ "$choice" -ge 1 ] && [ "$choice" -le "$count" ]; then
+          break
+        fi
+        echo "Selection must be between 1 and $count." >&2
+        ;;
+    esac
+  done
 
   local asset_url
   asset_url="$(download_selected_release "$releases_json" "$choice")"
