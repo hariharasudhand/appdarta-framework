@@ -7,6 +7,7 @@ The framework owns:
 - model registry resolution
 - role binding resolution
 - provider routing
+- framework-level AI policy defaults and checkpoints
 - token and cost accounting
 - budget visibility
 - operator-facing usage summaries
@@ -16,6 +17,15 @@ Verticals own:
 - which business phases need AI
 - which business modules invoke those phases
 - which business specs reference the framework-managed roles
+
+Enterprises can add or override policy at the organization layer:
+
+- allowed providers or model families
+- budget ceilings
+- approval requirements
+- sensitive-use restrictions
+
+Use-case implementations should attach and configure those policy components. They should not need custom framework behavior just to express domain-specific controls.
 
 ## What To Inspect
 
@@ -54,6 +64,7 @@ The release expectation is not full enterprise governance. It is that AppDarta c
 - which provider/model family was used
 - how many tokens were consumed
 - what the daily budget looks like
+- which policy checkpoint or approval rule applied when relevant
 
 ## UI Surface
 

@@ -13,20 +13,23 @@ Typical flow:
 
 ```bash
 darta run-wizard
+darta doctor --skip-stack
 darta project inspect --file .
 darta analyze inspect
 darta design inspect
 darta design compare
+darta validate --project .
 darta codegen plan --project .
-darta build project
-darta test project
-darta run project
+darta build project --project .
+darta stack up
+darta run project --project .
 ```
 
 The central framework owns:
 
 - schemas
 - gateway
+- framework service operations
 - centralized UI shell
 - model registry and codegen control plane
 - policy/orchestration/tank contracts

@@ -100,6 +100,13 @@ That technical lifting includes:
 
 If you want the fastest product-facing explanation of the framework box and what a vertical team can extend, read [Framework Capabilities For Vertical Teams](docs/framework-capabilities-for-teams.md).
 
+If you want the practical runtime/operator story, read:
+
+- [Quickstart](docs/quickstart.md)
+- [Framework Services](docs/services.md)
+- [Component Model](docs/component-model.md)
+- [Multi-Instance Deployment](docs/multi-instance-deployment.md)
+
 ## Why Try It
 
 AppDarta is useful when you want:

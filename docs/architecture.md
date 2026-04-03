@@ -31,6 +31,12 @@ Framework-owned:
 - runtime dispatch contract
 - central schemas and validation
 
+The framework policy model is intentionally modular:
+
+- framework-level policy components provide reusable defaults and guardrails
+- enterprise policy can extend or override those defaults
+- use-case implementations attach the right policy components without changing framework runtime semantics
+
 The release stance on multi-agent behavior is intentionally narrow:
 
 - deterministic coordination patterns first
@@ -57,8 +63,10 @@ AppDarta does not present unconstrained swarm behavior as the default release mo
 For the release, the trustworthy claim is:
 
 - orchestration belongs to the framework
-- policy gates handoff and fan-out boundaries
+- policy gates handoff and fan-out boundaries through framework-owned checkpoints
 - runtime steps remain isolated
 - operator surfaces should be able to explain what happened
+
+That same framework policy model should support different enterprise or use-case rules without pushing business-specific policy logic into the framework itself.
 
 That is enough to support multi-step vertical workflows without locking the framework into shared-scratchpad or prompt-only delegation semantics.

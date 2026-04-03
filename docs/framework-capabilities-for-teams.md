@@ -50,6 +50,8 @@ Put differently:
 - you build the functional piece
 - AppDarta handles the technical lifting that usually slows down agentic product teams
 
+The value is not just “we can run an agent.”
+
 The value is:
 
 - you can build a vertical product faster
@@ -83,6 +85,8 @@ AppDarta owns the heavy lifting:
 - operator-facing UI and runtime artifacts
 
 ### The Vertical Box
+
+Your team owns the business differentiation:
 
 - domain use cases
 - business-specific agents
