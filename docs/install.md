@@ -36,5 +36,6 @@ export PATH="$APPDARTA_HOME/bin:$PATH"
 ## Verify
 
 ```bash
+darta version
 darta framework current
 ```

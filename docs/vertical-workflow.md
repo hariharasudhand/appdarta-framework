@@ -12,12 +12,14 @@ Each vertical carries:
 Typical flow:
 
 ```bash
-darta project bootstrap
+darta run-wizard
+darta project inspect --file .
 darta analyze inspect
 darta design inspect
 darta design compare
 darta codegen plan --project .
 darta build project
+darta test project
 darta run project
 ```
 
@@ -28,3 +30,11 @@ The central framework owns:
 - centralized UI shell
 - model registry and codegen control plane
 - policy/orchestration/tank contracts
+- deterministic coordination semantics for multi-step execution
+
+The vertical owns:
+
+- business specs
+- business runtime assets
+- business UI modules
+- business demo inputs and fixtures
