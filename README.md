@@ -7,9 +7,9 @@
   <p><strong>A framework from <a href="https://www.dhruvialabs.com/">Dhruvia Labs</a></strong></p>
 </div>
 
-# AppDarta Framework
+# AppDarta aka Darta Framework
 
-> **Beta** — Active development. Early trials and feedback are welcome.
+> **Beta** (** Darling Release ** DR-x.x) — Active development. Early trials and feedback are welcome.
 
 AppDarta is a framework for building **vertical agentic applications** — domain-scoped AI workflows that are governed, extensible, and production-shaped from day one.
 
