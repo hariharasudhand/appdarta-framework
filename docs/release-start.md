@@ -1,120 +1,101 @@
 # Release Start
 
-This is the fastest way to understand the June public AppDarta drop.
+The fastest orientation to AppDarta as a product.
 
-## What Ships In The Public Drop
+---
 
-AppDarta ships as an installable framework product:
+## What Ships
 
-- `darta`
-- `appdarta-spec`
-- `wasmtime-host`
-- framework UI shell
-- framework schemas, docs, and central config
+AppDarta ships as an installable framework engine:
 
-You use that framework product from inside a separate vertical project.
+| Binary | Role |
+|---|---|
+| `darta` / `appdarta` | CLI + gateway execution engine |
+| `appdarta-spec` | Spec validator |
+| `wasmtime-host` | WASM agent execution host |
+| framework UI shell | Operator interface |
+| `specs/core/*.schema.json` | 31 spec schemas |
+| `config/model-registry.yaml` | AI provider/role config |
 
-## What The Release Proves
+`context-service` is a companion service (Python/Docker) started via the CLI — not bundled in the binary archive.
 
-The release is built around two showcase verticals:
+---
 
-- finance: fraud review
-- healthcare: medication review
+## What the Framework Proves
 
-The point is not just that the two examples run. The point is that they run through the same framework-owned path:
+AppDarta ships with two reference showcase verticals:
 
-- lifecycle inspection
-- tank-backed context
-- runtime evidence
-- deploy planning
-- operator-facing UI shell
+- **Finance**: fraud review — escalation-driven decision support with policy-visible operator approval checkpoints
+- **Healthcare**: medication review — evidence-backed guidance through the same framework lifecycle
 
-The repo also carries named validation paths for the two public showcase tracks:
+They run through the same framework-owned path: lifecycle inspection → tank-backed context → runtime evidence → deploy planning → operator-facing UI shell. The framework capability is vertical-agnostic.
 
-- `make validate-showcase-multi-agent`
-- `make validate-healthcare-showcase`
-
-The first validates the current lead multi-agent showcase path. Today that showcase scenario is finance, but the framework capability is intentionally vertical-agnostic.
+---
 
 ## Start Path
 
-1. Install AppDarta Engine.
-2. Create a project from the AppDarta vertical template.
-3. Run `darta run-wizard`.
-4. Move through inspect, analyze, design, build, test, run, and deploy planning.
-
-Core commands:
-
 ```bash
-darta version
+# 1. Install
+bash scripts/install_framework.sh
+
+# 2. Create a project from the vertical template
+git clone https://github.com/hariharasudhand/appdarta-vertical-template.git my-vertical
+cd my-vertical
 darta run-wizard
+
+# 3. Move through the lifecycle
+darta version
 darta doctor --skip-stack
 darta project inspect --file .
 darta analyze inspect --project .
 darta design inspect --project .
-darta design compare --project .
+darta validate --project .
 darta build project --project .
-darta test project --project .
+darta stack up
 darta run project --project .
 darta deploy plan --project .
 ```
 
-## What The Framework Owns
+---
 
-- CLI
-- UI shell
-- schemas
-- gateway and orchestration contracts
-- runtime dispatch boundary
-- AI role/provider routing
-- budget and usage visibility
-- shared tank and shared-agent contracts
+## What the Framework Owns
 
-## What A Vertical Owns
+- CLI and project workflow
+- UI shell and operator surfaces
+- Spec schemas and validation
+- Gateway, orchestration, and routing contracts
+- Runtime dispatch boundary (WASM, HTTP, gRPC, process)
+- AI role/provider routing, accounting, and budget visibility
+- Tank and context integration contracts
+- Policy evaluation and approval flow
 
-- business specs
-- business tanks and policies
-- business runtime assets
-- business UI modules
-- demo inputs, fixtures, and review surfaces
+## What Your Vertical Owns
 
-## Why Finance And Healthcare
+- Business use case and design specs
+- Domain agents, flows, and policies
+- Domain tanks and data sources
+- Business runtime modules (WASM or other)
+- Business UI modules
+- Domain fixtures, demos, and operator language
 
-Finance proves:
+---
 
-- escalation-oriented decision support
-- explicit handoff and bounded parallel evidence gathering
-- operator-visible approval checkpoints before higher-risk outcomes
-- policy-visible operator review
-- high-risk recommendation flow
+## Current State
 
-Healthcare proves:
-
-- a second domain with different business semantics
-- evidence-backed medication guidance
-- the same framework lifecycle and runtime path
-
-Together they show AppDarta is a reusable vertical framework, not a one-domain demo.
-
-## What Is Real Now
-
-- binary-first framework install path
-- wizard-first vertical onboarding
-- inspect/doctor/build/test/run/deploy-plan lifecycle
-- execution evidence and verification briefs
-- mounted operator views in the framework shell
+**Proven and working:**
+- Binary-first install path
+- Wizard-first vertical onboarding
+- Full lifecycle: inspect → analyze → design → build → test → run → deploy-plan
+- Execution evidence and verification artifacts
+- Framework UI shell with mounted operator views
 - AI usage and budget visibility
-- shared enterprise tank visibility through inspect, doctor, and deploy plan
-- deterministic coordination support for multi-step runtime flows
-- framework-visible approval checkpoints in result artifacts, inspect output, doctor guidance, and deploy planning
-- a minimal `darta project approve` path to clear or reject a pending human-review checkpoint, plus `--resume` when the operator wants to continue execution immediately
-- packaging for the framework plus finance and healthcare examples
+- Shared enterprise tank visibility through inspect, doctor, and deploy plan
+- Deterministic multi-agent coordination (sequential, parallel, fan-out/gather, approval/resume)
+- Policy-aware approval checkpoints
+- `darta project approve` path for clearing or rejecting human-review checkpoints
 
-## What Is Still Intentionally Early
-
-- richer enterprise AI governance
-- deeper shared-enterprise tank demonstrations and local search UX
-- broader multi-agent orchestration semantics beyond the current deterministic release support
-- third-vertical expansion
-
-The release is meant to prove that the framework path is real and coherent now, while leaving the broader roadmap explicit.
+**Intentionally next:**
+- Richer enterprise AI governance surfaces
+- Broader multi-agent orchestration beyond deterministic patterns
+- Deeper shared-enterprise tank search UX
+- Third-vertical expansion beyond finance and healthcare

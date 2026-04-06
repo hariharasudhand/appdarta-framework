@@ -89,7 +89,14 @@ install_package_dir() {
   mkdir -p "$releases_dir" "$bin_dir"
   rm -rf "$framework_dir"
   cp -R "$src_dir" "$framework_dir"
-  rm -rf "$current_dir"
+  # Remove current: unlink if symlink, otherwise move aside to avoid "Operation not permitted"
+  # warnings from trying to delete files that are in use by the running framework process.
+  if [ -L "$current_dir" ]; then
+    rm -f "$current_dir"
+  elif [ -d "$current_dir" ]; then
+    mv "$current_dir" "${current_dir}.old.$$" 2>/dev/null || rm -rf "$current_dir" || true
+    rm -rf "${current_dir}.old.$$" 2>/dev/null || true
+  fi
   ln -s "$framework_dir" "$current_dir" 2>/dev/null || cp -R "$framework_dir" "$current_dir"
 
   write_launchers "$bin_dir"

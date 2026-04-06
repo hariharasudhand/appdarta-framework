@@ -96,3 +96,26 @@ Build implements them.
 - `test` reads the prepared bundle and emits a verification brief for the smoke path
 - `run` reads the prepared bundle and runtime handoff
 - `deploy` reads the runtime handoff, verification brief, shared asset topology, and lifecycle readiness
+
+---
+
+## UI-driven lifecycle
+
+All stages are also accessible through the wizard UI:
+
+```bash
+darta ui serve
+```
+
+The wizard opens a browser shell with interactive panels for each stage (Setup, Use Cases, Clarify, Design, Build, Deploy). Sign-offs recorded in the UI are written to the same YAML files as the CLI.
+
+A persistent file explorer sidebar shows the project tree (read-only, IDE-style) and highlights spec files referenced by the active panel.
+
+The **Design panel** provides four capabilities beyond the CLI inspect command:
+
+- **AI self-assessment** — shows which enterprise agents and tanks can be reused, with status chips (bound / missing / stale) and click-to-highlight file refs
+- **Sequence diagram generation** — generates SVG sequence diagrams per key flow, saved as `specs/design/{domain}-technical-sequence.swim`
+- **Build prompts** — LLM-generated per-component build instructions saved to `specs/design/{component}-build-prompt.md`
+- **Review notes** — a persistent design review log written to `specs/design/{domain}-design-review-notes.yaml`; sign-off is gated on review notes existing
+
+The **Clarify panel** supports use case linking — attaching this project's use cases to use cases in other enterprise projects to make cross-project dependencies explicit before diagram generation is allowed.

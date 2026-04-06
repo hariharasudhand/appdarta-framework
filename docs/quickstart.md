@@ -138,6 +138,62 @@ darta run project --project .
 
 ---
 
+## Enterprise Setup
+
+If you are working as part of a team, setting up an enterprise registry lets multiple developers share project metadata and tank data.
+
+Create a new enterprise (first time for the team):
+
+```bash
+darta enterprise init
+```
+
+This asks for organisation name, industry, and whether the team is working in solo or distributed mode.
+
+**Local mode** (default) — all enterprise data stays on your machine. Best for solo exploration or single-developer verticals.
+
+**Distributed mode** — enterprise manifest backed by a shared git repo; tank data backed by a shared Postgres instance. Best for teams. During init you will be prompted for:
+- Git registry URL (an empty or existing git repo the team shares)
+- Branch (default: `main`)
+- Auto-sync on startup toggle
+- Shared Postgres DSN and schema
+
+Join an existing enterprise as a new team member:
+
+```bash
+darta enterprise onboard
+```
+
+This clones the enterprise git registry, displays registered projects, tests the Postgres connection, and optionally clones any registered project repos locally.
+
+Keep your local registry in sync:
+
+```bash
+darta enterprise sync
+```
+
+List registered enterprises on this machine:
+
+```bash
+darta enterprise list
+```
+
+---
+
+## UI-Driven Wizard
+
+All lifecycle phases are also accessible through the browser-based wizard:
+
+```bash
+darta ui serve
+```
+
+The wizard covers: Setup → Use Cases → Clarify → Design → Build → Deploy.
+
+Each phase mirrors the corresponding CLI commands and writes to the same YAML spec files. The Design panel additionally provides AI self-assessment of enterprise reuse, sequence diagram generation (inline SVG, saved as `.swim` files), and per-component build prompts.
+
+---
+
 <div align="center">
   <p><strong>Currently available for trial use.</strong></p>
   <p>For production rollout, commercial discussions, or framework adoption support, contact Dhruvia Labs.</p>
