@@ -4,74 +4,101 @@
       <img src="https://raw.githubusercontent.com/hariharasudhand/appdarta-vertical-template/master/logo_dhruvialabs.png" alt="Dhruvia Labs" width="260">
     </a>
   </p>
-  <p><strong>A framework from <a href="https://www.dhruvialabs.com/">Dhruvia Labs</a></strong></p>
+  <p><strong>A product from <a href="https://www.dhruvialabs.com/">Dhruvia Labs</a></strong></p>
 </div>
 
-# AppDarta aka Darta Framework
+# Darta Platform
 
-> **Beta** (** Darling Release ** DR-x.x) — Active development. Early trials and feedback are welcome.
+> **Beta** — Active development. Early trials and feedback are welcome.
 
-AppDarta is a framework for building **vertical agentic applications** — domain-scoped AI workflows that are governed, extensible, and production-shaped from day one.
+**Darta** is a platform for teams who want to build governed, domain-specific AI applications — not just wire prompts together.
 
----
-
-## The Two Boxes
-
-Everything in AppDarta divides cleanly into two responsibilities:
-
-```
-┌──────────────────────────────────────────────────────────┐
-│               FRAMEWORK  (binary, you install)           │
-│                                                          │
-│  appdarta / darta     CLI + gateway execution engine     │
-│  appdarta-spec        Spec validator (31 schemas)        │
-│  wasmtime-host        WASM agent execution host          │
-│  context-service      Tank storage + vector retrieval    │
-│                                                          │
-│  → you configure it, you do not modify it                │
-└──────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────┐
-│            YOUR VERTICAL  (source, you write)            │
-│                                                          │
-│  specs/agents/        Who your agents are                │
-│  specs/flows/         How agents coordinate              │
-│  specs/policies/      Decision and approval rules        │
-│  specs/tanks/         Domain knowledge sources           │
-│  specs/orchestration/ Gateway execution plan             │
-│  runtime/*.wasm       Compiled agent logic               │
-│                                                          │
-│  → framework validates and executes these at runtime     │
-└──────────────────────────────────────────────────────────┘
-```
-
-The framework binary never changes when you build a new vertical. You extend framework behavior through YAML specs and compiled WASM modules.
+The idea behind the name: *app_in darta* — you bring your app into Darta. Your domain, your agents, your data. Darta provides the structure, the routing, the governance, and the execution environment that turns it into something production-shaped.
 
 ---
 
-## What Ships in the Binary Bundle
+## What Darta Is For
 
-```
-dist/appdarta-framework/
-├── bin/
-│   ├── appdarta          # CLI + gateway (all framework logic)
-│   ├── darta             # shell alias for appdarta
-│   ├── appdarta-spec     # spec validator
-│   └── wasmtime-host     # WASM execution host
-├── specs/core/           # 31 JSON schemas (the spec contract)
-├── share/
-│   ├── config/
-│   │   └── model-registry.yaml
-│   ├── ui/
-│   │   └── framework-shell/
-│   └── docs/
-```
+Most AI tooling asks you to figure out governance, routing, knowledge management, and operational visibility yourself. Darta does that work so your team can focus on the domain problem.
 
-`context-service` runs as a Docker container — it is not in the binary bundle. Start it with `darta stack up` or `darta services start --service context-service`.
+You bring:
+- the business logic
+- the domain knowledge
+- the agents you need
+
+Darta brings:
+- a governed execution environment
+- a smart AI routing layer
+- a scanning and quality layer
+- a runtime that keeps your agents isolated and auditable
 
 ---
 
-## Getting Started
+## The Products Inside Darta
+
+### Darta Framework
+
+The foundation. Install it once, build any number of domain verticals on top of it.
+
+A vertical is your domain app — it carries your agents, your knowledge, your flows, and your rules. The framework handles everything else: execution, routing, context, policy evaluation, and lifecycle management.
+
+```
+darta project bootstrap   → start a new vertical
+darta stack up            → run your vertical locally
+darta ui serve            → open the wizard UI
+```
+
+### Darta Dhil
+
+The AI routing layer. Dhil is the intelligent proxy that sits between every AI action in your project and the actual tools running behind it.
+
+You tell Dhil what tools you have (a local Ollama, a Claude Code session, an AI gateway). Dhil handles which one runs for which task, in what order, with what fallback. No hardcoded provider calls inside your domain code.
+
+Dhil also manages **ContextOS** — named governance configurations that map AI roles to tools. Switch configs per environment or project. Everything persists in your Tank.
+
+```
+darta dhil setup          → install and verify Dhil
+darta dhil summary        → today's usage and session activity
+```
+
+### Darta Forge
+
+The code and dependency scanning layer. Forge keeps your vertical healthy as it grows — scanning for dependency issues, structural drift, and quality signals across your project.
+
+```
+darta forge scan          → scan project dependencies and structure
+```
+
+Forge is early. The current focus is dependency organisation and scanning. More quality and governance signals are coming.
+
+---
+
+## The Plan
+
+Darta is being built in phases. Here is where things stand today and where they are going:
+
+### Now — Foundation and AI Routing
+- Framework is installable and runs real domain verticals
+- Wizard UI covers the full lifecycle: setup → design → build → deploy
+- Darta Dhil is live — route AI prompts to any tool via the registry
+- ContextOS persists named AI governance configs
+- Graphviz diagram generation works inside the wizard
+- Offline compression available via Darta Dhil LLMLingua
+
+### Next — Forge and Quality Layer
+- Darta Forge scans project structure and dependencies
+- Scan results surface inside the wizard and CLI
+- Structural health becomes part of the deploy gate
+
+### Ahead — Enterprise and Marketplace
+- Shared enterprise tank registry (distributed mode is already stubbed)
+- Vertical marketplace for domain agent bundles
+- Cross-project use case linking at the enterprise level
+- Richer ContextOS policy controls per team and project
+
+---
+
+## How to Get Started
 
 **1. Install**
 
@@ -81,158 +108,50 @@ export PATH="$APPDARTA_HOME/bin:$PATH"
 bash scripts/install_framework.sh
 ```
 
-**2. Create a vertical project**
+**2. Create a vertical**
 
 ```bash
 git clone https://github.com/hariharasudhand/appdarta-vertical-template.git my-vertical
 cd my-vertical
-darta run-wizard          # personalizes the template for your domain
-darta doctor --skip-stack # verify the install is wired up
+darta run-wizard
+darta doctor --skip-stack
 ```
 
-**3. Inspect and validate**
+**3. Set up Dhil**
 
 ```bash
-darta project inspect --file .
-darta analyze inspect --project .
-darta design inspect --project .
-darta validate --project .
+darta dhil setup
+darta dhil tools add --name my-tool --type http --url http://localhost:11434 --roles local,backup
+darta dhil summary
 ```
 
-**4. Build and run**
+**4. Run your vertical**
 
 ```bash
-darta build project --project .
-darta stack up            # starts context-service, runtime-host, gateway
-darta run project --project .
+darta stack up
+darta project run --project .
 ```
 
 ---
 
-## What Your Vertical Configures
+## What Your Vertical Contains
 
-You do not modify framework source. You write specs:
+You do not modify the platform. You write specs:
 
-| What you declare | File location | Schema |
+| What you declare | File | Schema |
 |---|---|---|
-| An agent and its runtime type | `specs/agents/*.yaml` | `AgentSpec` |
+| An agent and its runtime | `specs/agents/*.yaml` | `AgentSpec` |
 | How agents coordinate | `specs/flows/*.yaml` | `FlowSpec` |
-| Decision and approval rules | `specs/policies/*.yaml` | `PolicySpec` |
-| Domain knowledge source | `specs/tanks/*.yaml` | `DataTankSpec` |
+| Decision rules | `specs/policies/*.yaml` | `PolicySpec` |
+| Domain knowledge | `specs/tanks/*.yaml` | `DataTankSpec` |
 | Gateway execution plan | `specs/orchestration/*.yaml` | `OrchestrationSpec` |
 
-Validate any spec:
+Validate anything:
 
 ```bash
 darta validate --file specs/agents/my-agent.yaml
-darta validate --project .    # validate everything
-```
-
----
-
-## Runtime Types
-
-Agents are not limited to WASM. Each agent declares its own runtime mode:
-
-| Mode | What runs | Framework handles |
-|---|---|---|
-| `wasm` | Compiled `.wasm` module | `wasmtime-host` loads and isolates it |
-| `http` | External HTTP service | Gateway routes to declared endpoint |
-| `grpc` | External gRPC service | Gateway routes with proto-ref |
-| `process` | Local binary | Gateway spawns with declared command |
-
-One vertical can mix runtime types. The framework contract is the same regardless of mode.
-
----
-
-## Framework Services
-
-Three services run your vertical at runtime:
-
-| Service | Role | Default port |
-|---|---|---|
-| `context-service` | Tank storage, embeddings, vector search | 18001 |
-| `runtime-host` | WASM agent execution | 18091 |
-| `gateway` | Orchestration and routing | 18110 |
-
-```bash
-darta stack up            # start all three in dependency order
-darta services ps         # see all running instances
-darta services health     # health probe all services
-darta services logs --service gateway --follow
-darta stack down
-```
-
-See [services.md](docs/services.md) for full reference.
-
----
-
-## Extension Points
-
-Everything configurable without touching source:
-
-```bash
-# Override service ports or hosts
-darta extend config --service gateway --key listen --value 0.0.0.0:18110
-darta extend config --service runtime-host --key context_service_url --value http://127.0.0.1:18002
-
-# Run multiple isolated instances (staging, multi-tenancy, load testing)
-darta services start --service context-service --instance staging --port 18002
-darta services start --service runtime-host --instance staging --port 18092
-darta gateway serve --listen 127.0.0.1:18111 --project ./other-vertical
-```
-
-Configuration overrides are saved to `.appdarta-local.yaml`.
-
-See [multi-instance-deployment.md](docs/multi-instance-deployment.md).
-
----
-
-## Going to Production
-
-**1. Pin the framework version in your project**
-
-```yaml
-# appdarta.framework.yaml
-spec:
-  required_framework_version: "1.2.3"
-  schema_bundle_version: "1.2.3"
-```
-
-`darta doctor` checks this binding. Framework updates are explicit, never automatic.
-
-**2. Run the full validation gate**
-
-```bash
 darta validate --project .
-darta doctor
-darta deploy plan --project .
 ```
-
-**3. Review the deploy plan output**
-
-`darta deploy plan` surfaces:
-- framework version match
-- spec binding completeness
-- tank freshness status
-- pending approvals or policy checkpoints
-- AI role binding coverage
-
-**4. Bind your storage backends**
-
-```bash
-CHROMA_URL=http://your-chromadb:8000
-POSTGRES_URL=postgresql://...
-REDIS_URL=redis://...
-```
-
-**5. Run in container mode**
-
-```bash
-darta stack up --mode container
-```
-
-Or supply a `docker-compose.override.yml` for your production topology.
 
 ---
 
@@ -240,13 +159,14 @@ Or supply a `docker-compose.override.yml` for your production topology.
 
 | Topic | Doc |
 |---|---|
-| Component model — what's framework, what's yours | [component-model.md](docs/component-model.md) |
-| Framework services reference | [services.md](docs/services.md) |
-| Multi-instance and tenant isolation | [multi-instance-deployment.md](docs/multi-instance-deployment.md) |
+| Architecture overview | [architecture.md](docs/architecture.md) |
+| Darta Dhil — AI routing | [dhil.md](docs/dhil.md) |
 | Data tanks and knowledge retrieval | [data-tanks.md](docs/data-tanks.md) |
 | AI governance and model roles | [ai-governance.md](docs/ai-governance.md) |
+| Component model — what's platform, what's yours | [component-model.md](docs/component-model.md) |
+| Framework services reference | [services.md](docs/services.md) |
 | Vertical lifecycle walkthrough | [quickstart.md](docs/quickstart.md) |
-| Architecture overview | [architecture.md](docs/architecture.md) |
+| Multi-instance and tenant isolation | [multi-instance-deployment.md](docs/multi-instance-deployment.md) |
 
 ---
 

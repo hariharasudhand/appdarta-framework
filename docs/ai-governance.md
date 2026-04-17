@@ -1,42 +1,56 @@
 # AI Governance
 
-AppDarta’s release-minimum AI control plane is intentionally small but visible.
+Darta Platform manages AI governance at two levels: **Darta Dhil** for interactive AI routing across the wizard and CLI, and the **spec-level control plane** for AI usage inside your running agents.
 
-The framework owns:
+---
 
+## Darta Dhil — Interactive AI
+
+Dhil is the AI proxy and router for everything you do interactively — wizard steps, diagram generation, codegen prompts. Every AI request routes through Dhil. You configure the tools; Dhil picks the right one.
+
+What Darta owns:
+- the tool registry schema and resolution logic
+- role priority evaluation across your configured tools
+- ContextOS config persistence via Tank
+- token usage recording per session
+
+What you configure:
+- which tools are in your registry (`~/.appdarta/dhil/tools.yaml`)
+- which ContextOS config is active
+- budget preferences per role
+
+See [dhil.md](docs/dhil.md) for the full guide.
+
+---
+
+## Spec-Level AI Governance
+
+For agents that call `appdarta_ai_complete` at runtime, the platform uses `ModelRegistrySpec` and `ModelRoleBindingSpec` to control which provider and model run for which task.
+
+What Darta owns:
 - model registry resolution
 - role binding resolution
-- provider routing
-- framework-level AI policy defaults and checkpoints
+- provider routing and fallback chains
+- framework-level AI policy defaults
 - token and cost accounting
-- budget visibility
-- operator-facing usage summaries
+- budget visibility for operators
 
-Verticals own:
-
+What your vertical declares:
 - which business phases need AI
-- which business modules invoke those phases
-- which business specs reference the framework-managed roles
+- which framework roles those phases use
+- optional enterprise-level policy overlays (allowed providers, budget ceilings, approval requirements)
 
-Enterprises can add or override policy at the organization layer:
+---
 
-- allowed providers or model families
-- budget ceilings
-- approval requirements
-- sensitive-use restrictions
+## Inspecting AI Config
 
-Use-case implementations should attach and configure those policy components. They should not need custom framework behavior just to express domain-specific controls.
-
-## What To Inspect
-
-From a vertical project root, start with:
+From a vertical project root:
 
 ```bash
 darta project inspect --file .
 ```
 
-That output should show:
-
+This shows:
 - `AI config`
 - `Model registry`
 - `Role bindings`
@@ -45,11 +59,9 @@ That output should show:
 - `AI budget`
 - `AI policy`
 
-Those fields are the release-facing proof that the vertical is not making ad hoc provider calls without framework attribution.
+---
 
-## What To Report
-
-To inspect usage and burn:
+## Usage and Cost Visibility
 
 ```bash
 darta token-usage --period daily
@@ -58,41 +70,30 @@ darta token-usage --period daily --by provider
 darta token-usage --period daily --by module
 ```
 
-The release expectation is not full enterprise governance. It is that AppDarta can already answer:
-
+Darta can answer today:
 - which role was active
-- which provider/model family was used
+- which provider and model ran
 - how many tokens were consumed
 - what the daily budget looks like
-- which policy checkpoint or approval rule applied when relevant
+- which policy checkpoint applied
+
+---
 
 ## UI Surface
 
-The framework shell should reflect the same control-plane concepts:
-
-- build role
-- runtime role
-- daily AI cost
-- daily AI tokens
+The wizard shell surfaces the same information:
+- active role and provider
+- daily AI cost and token count
 - budget burn
 - provider, role, model, and module breakdowns
 
-That keeps CLI and UI aligned to the same accounting story.
+---
 
-## Release Scope
+## What Is Coming
 
-For the June public drop, the AI control plane claim is:
+The current AI governance story is intentionally minimal. Future work includes:
 
-- the framework owns role and provider routing
-- the framework records usage and estimated cost
-- the framework exposes daily budget burn to operators
-- the framework keeps this separate from business tank data
-
-It does **not** claim a finished enterprise governance platform yet.
-
-Later work can deepen:
-
-- hard budget enforcement
+- hard budget enforcement (block requests when ceiling is reached)
 - richer provider fallback policies
-- project and country-specific pricing controls
-- more explicit runtime attribution across orchestration steps
+- deeper per-project and per-team ContextOS controls
+- Forge integration — quality signals factored into AI routing decisions
