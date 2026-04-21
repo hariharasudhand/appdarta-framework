@@ -1,36 +1,35 @@
 # Install AppDarta Engine
 
-## Interactive install from public releases
-
-If you have the installer script from the framework package or source tree:
-
-```bash
-bash scripts/install_framework.sh
-```
-
-That flow will:
-
-1. query the latest public AppDarta releases
-2. list the most recent five
-3. ask you to choose one
-4. download the selected release
-5. install it into `APPDARTA_HOME`
-
-## Local install from a package directory
-
-If you already downloaded and unpacked a release locally:
-
-```bash
-bash scripts/install_framework.sh /path/to/appdarta-framework
-```
-
 ## Shell setup
 
-Add this to your shell profile:
+Add these lines to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.) before running the installer:
 
 ```bash
 export APPDARTA_HOME="${APPDARTA_HOME:-$HOME/.appdarta}"
 export PATH="$APPDARTA_HOME/bin:$PATH"
+```
+
+## Install from a public release
+
+Download and run the installer:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/main/scripts/install_framework.sh -o install_darta.sh
+bash install_darta.sh
+```
+
+The installer fetches available releases from GitHub, lists them, and installs your choice. When prompted, select **vDR.0.3** (the current release). No manual download needed.
+
+You can discard `install_darta.sh` after the install completes.
+
+> **Already on vDR.0.2?** Run the same two commands again and select vDR.0.3. The installer upgrades in place.
+
+## Install from a local package directory
+
+If you have already downloaded and unpacked a release locally:
+
+```bash
+bash scripts/install_framework.sh /path/to/appdarta-framework
 ```
 
 ## Verify

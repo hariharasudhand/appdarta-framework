@@ -100,13 +100,27 @@ Darta is being rolled out in stages. This is the current scope and the next prod
 
 ## How to Get Started
 
-**1. Install**
+**1. Install Darta**
+
+Add these lines to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.):
 
 ```bash
 export APPDARTA_HOME="${APPDARTA_HOME:-$HOME/.appdarta}"
 export PATH="$APPDARTA_HOME/bin:$PATH"
-bash scripts/install_framework.sh
 ```
+
+Then download and run the installer:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/main/scripts/install_framework.sh -o install_darta.sh
+bash install_darta.sh
+```
+
+The installer fetches available releases from GitHub, lists them, and installs your choice — no manual download. When prompted, select **vDR.0.3** (the current release).
+
+> **Already on vDR.0.2?** Run the same two commands again and select vDR.0.3. The installer upgrades in place and you are done.
+
+After install you can discard `install_darta.sh`. The `darta` command is now available from `APPDARTA_HOME/bin`.
 
 **2. Create a vertical**
 
@@ -129,8 +143,11 @@ darta dhil summary
 
 ```bash
 darta stack up
+darta ui serve
 darta project run --project .
 ```
+
+`darta ui serve` opens the browser-based wizard — it covers the full lifecycle from Setup through to Deploy and mirrors every CLI command. `darta stack up` starts the local framework services your vertical needs (runtime host, context service, gateway).
 
 ---
 
