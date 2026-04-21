@@ -98,84 +98,15 @@ Darta is being rolled out in stages. This is the current scope and the next prod
 
 ---
 
-## How to Get Started
+## Building a Vertical
 
-**1. Install Darta**
+Start here: **[appdarta-vertical-template](https://github.com/hariharasudhand/appdarta-vertical-template)**
 
-Add these lines to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.):
-
-```bash
-export APPDARTA_HOME="${APPDARTA_HOME:-$HOME/.appdarta}"
-export PATH="$APPDARTA_HOME/bin:$PATH"
-```
-
-Then download and run the installer:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/main/scripts/install_framework.sh -o install_darta.sh
-bash install_darta.sh
-```
-
-The installer fetches available releases from GitHub, lists them, and installs your choice — no manual download. When prompted, select **vDR.0.3** (the current release).
-
-> **Already on vDR.0.2?** Run the same two commands again and select vDR.0.3. The installer upgrades in place and you are done.
-
-After install you can discard `install_darta.sh`. The `darta` command is now available from `APPDARTA_HOME/bin`.
-
-**2. Create a vertical**
-
-```bash
-git clone https://github.com/hariharasudhand/appdarta-vertical-template.git my-vertical
-cd my-vertical
-darta run-wizard
-darta doctor --skip-stack
-```
-
-**3. Set up Dhil**
-
-```bash
-darta dhil setup
-darta dhil tools add --name my-tool --type http --url http://localhost:11434 --roles local,backup
-darta dhil summary
-```
-
-**4. Run your vertical**
-
-```bash
-darta stack up
-darta ui serve
-darta project run --project .
-```
-
-`darta ui serve` opens the browser-based wizard — it covers the full lifecycle from Setup through to Deploy and mirrors every CLI command. `darta stack up` starts the local framework services your vertical needs (runtime host, context service, gateway).
+That repository is the entry point for vertical developers. It has everything to get you from zero to a running vertical — setup instructions (Mac, Linux, Windows), reading order, and the full lifecycle walkthrough. This repository is the reference hub for docs, architecture, and release assets.
 
 ---
 
-## What Your Vertical Contains
-
-You do not modify the platform. You write specs:
-
-| What you declare | File | Schema |
-|---|---|---|
-| An agent and its runtime | `specs/agents/*.yaml` | `AgentSpec` |
-| How agents coordinate | `specs/flows/*.yaml` | `FlowSpec` |
-| Decision rules | `specs/policies/*.yaml` | `PolicySpec` |
-| Domain knowledge | `specs/tanks/*.yaml` | `DataTankSpec` |
-| Domain ontology | `specs/ontology/*.yaml` | `OntologySpec` |
-| Evaluation criteria | `specs/evals/*.yaml` | `EvalSpec` |
-| Runtime signals | `specs/signals/*.yaml` | `SignalSpec` |
-| Gateway execution plan | `specs/orchestration/*.yaml` | `OrchestrationSpec` |
-
-Validate anything:
-
-```bash
-darta validate --file specs/agents/my-agent.yaml
-darta validate --project .
-```
-
----
-
-## Where to Go Next
+## Documentation
 
 | Topic | Doc |
 |---|---|
