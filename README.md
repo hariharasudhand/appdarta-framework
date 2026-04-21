@@ -73,9 +73,9 @@ Forge is early. The current focus is dependency organisation and scanning. More 
 
 ---
 
-## The Plan
+## Product Scope
 
-Darta is being built in phases. Here is where things stand today and where they are going:
+Darta is being rolled out in stages. This is the current scope and the next product areas:
 
 ### Now — Foundation and AI Routing
 - Framework is installable and runs real domain verticals
@@ -178,5 +178,5 @@ darta validate --project .
 
 <div align="center">
   <p><strong>Currently available for trial use.</strong></p>
-  <p>Contact <a href="https://www.dhruvialabs.com/">Dhruvia Labs</a> for production rollout, adoption support, and commercial planning.</p>
+  <p>Contact <a href="https://www.dhruvialabs.com/">Dhruvia Labs</a> for production rollout, adoption support, and commercial rollout.</p>
 </div>
