@@ -144,6 +144,9 @@ You do not modify the platform. You write specs:
 | How agents coordinate | `specs/flows/*.yaml` | `FlowSpec` |
 | Decision rules | `specs/policies/*.yaml` | `PolicySpec` |
 | Domain knowledge | `specs/tanks/*.yaml` | `DataTankSpec` |
+| Domain ontology | `specs/ontology/*.yaml` | `OntologySpec` |
+| Evaluation criteria | `specs/evals/*.yaml` | `EvalSpec` |
+| Runtime signals | `specs/signals/*.yaml` | `SignalSpec` |
 | Gateway execution plan | `specs/orchestration/*.yaml` | `OrchestrationSpec` |
 
 Validate anything:
@@ -162,6 +165,9 @@ darta validate --project .
 | Architecture overview | [architecture.md](docs/architecture.md) |
 | Darta Dhil — AI routing | [dhil.md](docs/dhil.md) |
 | Data tanks and knowledge retrieval | [data-tanks.md](docs/data-tanks.md) |
+| Domain ontology | [ontology.md](docs/ontology.md) |
+| Evaluation specs | [evals.md](docs/evals.md) |
+| Runtime signals | [signals.md](docs/signals.md) |
 | AI governance and model roles | [ai-governance.md](docs/ai-governance.md) |
 | Component model — what's platform, what's yours | [component-model.md](docs/component-model.md) |
 | Framework services reference | [services.md](docs/services.md) |
