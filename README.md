@@ -102,7 +102,7 @@ Darta is being rolled out in stages. This is the current scope and the next prod
 
 Start here: **[appdarta-vertical-template](https://github.com/hariharasudhand/appdarta-vertical-template)**
 
-That repository is the entry point for vertical developers. It has everything to get you from zero to a running vertical — setup instructions (Mac, Linux, Windows), reading order, and the full lifecycle walkthrough. This repository is the reference hub for docs, architecture, and release assets.
+That repository is the entry point for vertical developers. It has everything to get you from zero to a running vertical — setup instructions (macOS and Linux, including WSL2 on Windows), reading order, and the full lifecycle walkthrough. This repository is the reference hub for docs, architecture, and release assets.
 
 ---
 

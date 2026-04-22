@@ -21,6 +21,22 @@ require_command() {
   fi
 }
 
+detect_platform() {
+  local os arch
+  os="$(uname -s | tr '[:upper:]' '[:lower:]')"
+  arch="$(uname -m)"
+  case "$os" in
+    linux|darwin) ;;
+    *) echo "unsupported OS: $os — AppDarta supports macOS and Linux (including WSL2)" >&2; exit 2 ;;
+  esac
+  case "$arch" in
+    x86_64|amd64) arch="amd64" ;;
+    aarch64|arm64) arch="arm64" ;;
+    *) echo "unsupported architecture: $arch" >&2; exit 2 ;;
+  esac
+  echo "${os}-${arch}"
+}
+
 write_launchers() {
   local bin_dir="$1"
   mkdir -p "$bin_dir"
@@ -49,19 +65,6 @@ exec "\$APPDARTA_FRAMEWORK_HOME/bin/appdarta" "\$@"
 EOF
   chmod +x "$bin_dir/appdarta"
 
-  cat > "$bin_dir/darta.cmd" <<EOF
-@echo off
-setlocal
-if "%APPDARTA_HOME%"=="" set "APPDARTA_HOME=$appdarta_home"
-if "%APPDARTA_FRAMEWORK_HOME%"=="" set "APPDARTA_FRAMEWORK_HOME=%APPDARTA_HOME%\framework\current"
-"%APPDARTA_FRAMEWORK_HOME%\bin\appdarta.exe" %*
-EOF
-
-  cat > "$bin_dir/darta.ps1" <<EOF
-if (-not \$env:APPDARTA_HOME) { \$env:APPDARTA_HOME = "$appdarta_home" }
-if (-not \$env:APPDARTA_FRAMEWORK_HOME) { \$env:APPDARTA_FRAMEWORK_HOME = Join-Path \$env:APPDARTA_HOME "framework/current" }
-& (Join-Path \$env:APPDARTA_FRAMEWORK_HOME "bin/appdarta.exe") @args
-EOF
 }
 
 install_package_dir() {
@@ -141,12 +144,14 @@ PY
 download_selected_release() {
   local releases_json="$1"
   local choice="$2"
-  python3 - "$releases_json" "$choice" <<'PY'
+  local platform="$3"
+  python3 - "$releases_json" "$choice" "$platform" <<'PY'
 import json, sys
 from pathlib import Path
 
 data = json.loads(Path(sys.argv[1]).read_text())
 raw = sys.argv[2].strip()
+platform = sys.argv[3].strip()
 selected = None
 
 if raw.isdigit():
@@ -166,13 +171,24 @@ else:
 
 release = selected
 assets = release.get("assets") or []
-for asset in assets:
-    name = asset.get("name") or ""
-    url = asset.get("browser_download_url") or ""
-    if name.endswith(".tar.gz") and "appdarta-framework" in name and url:
-        print(url)
-        raise SystemExit(0)
-raise SystemExit("no downloadable appdarta-framework .tar.gz asset found for selected release")
+
+# Prefer platform-specific asset, fall back to generic for older releases
+platform_specific = f"appdarta-framework-{platform}.tar.gz"
+generic = "appdarta-framework.tar.gz"
+url_by_name = {(asset.get("name") or ""): (asset.get("browser_download_url") or "") for asset in assets}
+
+if platform_specific in url_by_name and url_by_name[platform_specific]:
+    print(url_by_name[platform_specific])
+    raise SystemExit(0)
+
+# Fall back to legacy generic archive
+if generic in url_by_name and url_by_name[generic]:
+    print(url_by_name[generic], file=sys.stderr)  # warn via stderr
+    print("warning: no platform-specific release found for '{}', using generic archive (may be wrong platform)".format(platform), file=sys.stderr)
+    print(url_by_name[generic])
+    raise SystemExit(0)
+
+raise SystemExit("no downloadable appdarta-framework asset found for platform '{}' in selected release".format(platform))
 PY
 }
 
@@ -180,6 +196,10 @@ download_and_extract_release() {
   require_command curl
   require_command tar
   require_command python3
+
+  local platform
+  platform="$(detect_platform)"
+  echo "Detected platform: ${platform}" >&2
 
   tmp_root="$(mktemp -d)"
   local releases_json="$tmp_root/releases.json"
@@ -205,7 +225,7 @@ download_and_extract_release() {
         echo "Please enter a release number or tag." >&2
         ;;
       * )
-        if download_selected_release "$releases_json" "$choice" >/dev/null 2>&1; then
+        if download_selected_release "$releases_json" "$choice" "$platform" >/dev/null 2>&1; then
           break
         fi
         echo "Selection must match one of the listed release numbers or tags." >&2
@@ -214,7 +234,7 @@ download_and_extract_release() {
   done
 
   local asset_url
-  asset_url="$(download_selected_release "$releases_json" "$choice")"
+  asset_url="$(download_selected_release "$releases_json" "$choice" "$platform")"
   local archive_path="$tmp_root/appdarta-framework.tar.gz"
   curl -fL "$asset_url" -o "$archive_path"
 
