@@ -6,52 +6,76 @@ You configure everything through specs and the CLI. You never need to touch the 
 
 ---
 
-## The Big Picture
+## High-Level Architecture
 
 ```mermaid
 flowchart TB
-    subgraph you["Your Team"]
-        CLI["darta CLI"]
-        UI["Wizard UI Shell"]
+    subgraph design["Design Time — darta CLI + UI"]
+        direction LR
+        CLI["darta CLI\n(analyze · design · build · validate)"]
+        UI["Wizard UI Shell\nlocalhost:7070"]
+        SPEC["Vertical Specs\nagents · flows · policies · tanks · ontology · BDD"]
     end
 
-    subgraph dhil["Darta Dhil — AI Routing"]
-        TR["Tool Registry"]
-        COS["ContextOS\nGovernance Config"]
+    subgraph knowledge["Knowledge Layer — Data Tanks"]
+        direction LR
+        SOURCES["Sources\nfiles · API · webhook · DB"]
+        TANK["DataTank\n(context-service :18001)"]
+        EMBED["Embeddings\n(RAG / vector)"]
+        SOURCES --> TANK
+        TANK --> EMBED
     end
 
-    subgraph platform["Darta Platform (binary)"]
-        GW["Gateway\n:18110"]
-        RH["Runtime Host\n:18091"]
-        CS["Context Service\n:18001"]
+    subgraph orchestration["Orchestration Layer — Gateway :18110"]
+        direction TB
+        GW["Request Router"]
+        POLICY["Policy Engine\nplatform · enterprise · use-case"]
+        REASON["Reasoning & Decision Agent\nReasoningSpec — BDD + DSL + Ontology"]
+        GW --> POLICY
+        GW --> REASON
+        REASON -->|matched rule → sync / async| GW
     end
 
-    subgraph vertical["Your Vertical"]
-        SPECS["Specs\nagents · flows · policies · tanks"]
-        WASM["Agent Logic\n(WASM / HTTP / gRPC)"]
-        DOCS["Domain Knowledge\n(Tank documents)"]
+    subgraph llm["LLM Providers — Dhil"]
+        direction LR
+        MR["Model Registry\nroles · providers · fallbacks"]
+        COS["ContextOS\nAI governance config"]
+        DHIL["Adaptive Router\ncost · quality · latency"]
+        MR --> DHIL
+        COS --> DHIL
     end
 
-    subgraph forge["Darta Forge — Scanning"]
-        SC["Dependency + structure scan"]
+    subgraph exec["Runtime — Agent Execution"]
+        direction LR
+        RH["Runtime Host :18091\nwasmtime · Docker · HTTP · gRPC"]
+        AGENTS["Your Agents\nany language"]
+        RH --> AGENTS
     end
 
-    UI -->|wizard actions| TR
-    CLI -->|lifecycle + build + deploy| GW
-    TR -->|role-based routing| COS
-    COS -->|dispatch| aitools["AI Tools\n(Ollama / Claude Code / gateway)"]
+    subgraph rtsettings["Runtime Config — per project"]
+        direction LR
+        RTUI["darta runtime ui serve\nlocalhost:7071"]
+        RTCOS["Runtime ContextOS\n+ AI Settings"]
+        RTTANK["Runtime Tank\nconfig store"]
+        RTUI --> RTCOS
+        RTCOS --> RTTANK
+    end
 
-    GW -->|run agent| RH
-    GW -->|check policy| GW
-    GW -->|fetch context| CS
-    RH -->|read tank| CS
+    CLI -->|define + validate| SPEC
+    UI  -->|wizard actions|    SPEC
+    SPEC -->|loaded by|        GW
+    SPEC -->|tank definitions| TANK
 
-    SPECS -->|loaded by| GW
-    WASM -->|executed by| RH
-    DOCS -->|ingested into| CS
+    GW -->|fetch context| TANK
+    GW -->|route + invoke| RH
+    RH -->|appdarta_ai_complete| DHIL
+    DHIL -->|provider call| Provider["AI Provider\nClaude · GPT · Ollama"]
 
-    CLI -->|scan| SC
+    rtsettings -->|governs at runtime| orchestration
+    rtsettings -->|governs at runtime| llm
 ```
+
+Darta separates **design-time** (spec authoring, validation, build) from **runtime** (gateway, agent execution, AI settings). The Reasoning & Decision Agent is the only genuinely LLM-driven component in the orchestration layer — everything else is deterministic policy evaluation. Runtime AI settings and ContextOS config are stored per-project in a configured tank, managed via `darta runtime ui serve`.
 
 ---
 
