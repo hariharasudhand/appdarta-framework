@@ -6,72 +6,52 @@ You configure everything through specs and the CLI. You never need to touch the 
 
 ---
 
-## High-Level Architecture
+## The Big Picture
 
 ```mermaid
-flowchart LR
-    subgraph DT["DESIGN TIME"]
-        direction TB
-        subgraph you["You"]
-            direction LR
-            CLI["darta CLI"]
-            UI["Wizard UI\nlocalhost:7070"]
-        end
-        subgraph specs["Your Vertical Specs"]
-            direction LR
-            SP1["AgentSpec\nFlowSpec"]
-            SP2["PolicySpec\nDataTankSpec"]
-            SP3["Ontology\nBDD Scenarios"]
-        end
-        CLI --> specs
-        UI --> specs
+flowchart TB
+    subgraph you["Your Team"]
+        CLI["darta CLI"]
+        UI["Wizard UI Shell"]
     end
 
-    subgraph RT["RUNTIME"]
-        direction TB
-        subgraph config["Runtime Config — darta runtime ui serve :7071"]
-            direction LR
-            RTAI["AI Settings\nprovider bindings, role overrides"]
-            RTCOS["ContextOS\ngovernance profile, PII routing, budget"]
-        end
-        subgraph orch["Orchestration — Gateway :18110"]
-            direction LR
-            GW["Router + Auth\n+ Rate Limiting"]
-            POL["Policy Engine\nplatform, enterprise, use-case"]
-            RES["Reasoning Agent\nBDD-constrained LLM\nsync or async routing"]
-        end
-        subgraph know["Knowledge — Data Tanks :18001"]
-            direction LR
-            SRC["Sources\nfiles, API pull, webhook push, DB"]
-            CTX["Context Service\nembeddings, RAG, vector search"]
-        end
-        subgraph exec["Agent Execution — Runtime Host :18091"]
-            direction LR
-            RH["wasmtime, Docker\nHTTP, gRPC"]
-            AG["Your Agents\nany language"]
-        end
-        subgraph llm["LLM Providers — Dhil"]
-            direction LR
-            DR["Adaptive Router\ncost, quality, latency"]
-            PR["Claude, GPT, Gemini\nOllama, Azure, Groq\nMistral, vLLM, Bedrock"]
-        end
-        config --> orch
-        config --> llm
-        SRC --> CTX
-        GW --> POL
-        GW --> RES
-        RH --> AG
-        DR --> PR
-        orch --> know
-        orch --> exec
-        exec --> llm
+    subgraph dhil["Darta Dhil — AI Routing"]
+        TR["Tool Registry"]
+        COS["ContextOS\nGovernance Config"]
     end
 
-    specs -->|specs loaded at deploy| orch
-    specs -->|tank definitions| know
+    subgraph platform["Darta Platform (binary)"]
+        GW["Gateway\n:18110"]
+        RH["Runtime Host\n:18091"]
+        CS["Context Service\n:18001"]
+    end
+
+    subgraph vertical["Your Vertical"]
+        SPECS["Specs\nagents · flows · policies · tanks"]
+        WASM["Agent Logic\n(WASM / HTTP / gRPC)"]
+        DOCS["Domain Knowledge\n(Tank documents)"]
+    end
+
+    subgraph forge["Darta Forge — Scanning"]
+        SC["Dependency + structure scan"]
+    end
+
+    UI -->|wizard actions| TR
+    CLI -->|lifecycle + build + deploy| GW
+    TR -->|role-based routing| COS
+    COS -->|dispatch| aitools["AI Tools\n(Ollama / Claude Code / gateway)"]
+
+    GW -->|run agent| RH
+    GW -->|check policy| GW
+    GW -->|fetch context| CS
+    RH -->|read tank| CS
+
+    SPECS -->|loaded by| GW
+    WASM -->|executed by| RH
+    DOCS -->|ingested into| CS
+
+    CLI -->|scan| SC
 ```
-
-Darta has two distinct phases. **Design time** is where your team authors specs, runs the wizard, and validates — no running infrastructure needed. **Runtime** is the deployed system: the Gateway routes every request through Policy evaluation and optionally the Reasoning Agent, hydrates context from Data Tanks, executes your agents (in any language, any runtime), and calls AI providers through Dhil's adaptive router. Runtime AI settings and ContextOS governance are configured per project via `darta runtime ui serve` and stored in the project tank.
 
 ---
 
