@@ -55,7 +55,94 @@ flowchart TB
 
 ---
 
-## Control Plane and Execution Plane
+## High-Level Architecture
+
+*Composable. Decoupled. Scalable.*
+
+```mermaid
+flowchart LR
+    subgraph L1["1  YOUR TEAM"]
+        direction TB
+        WCLI["darta CLI\nanalyze, design\nbuild, validate"]
+        WUI["Wizard UI Shell\nlocalhost:7070"]
+        WRUN["run-wizard\ndoctor, signoff"]
+    end
+
+    subgraph L2["2  GATEWAY LAYER  :18110"]
+        direction TB
+        GAUTH["Auth and Rate Limiting"]
+        GPOL["Policy Engine\nplatform, enterprise, use-case\nOPA 3-layer evaluation"]
+        GAUD["Audit Log\nToken Accounting"]
+    end
+
+    subgraph L3["3  ORCHESTRATION LAYER"]
+        direction TB
+        subgraph ORCH["Orchestrator"]
+            direction LR
+            RAGT["Reasoning and Decision Agent\nBDD-constrained LLM\nmatches intent to declared rule"]
+            FEXEC["Flow Executor\nFlowSpec, OrchestrationSpec\nbranching, retries, handoffs"]
+            ARUN["Agent Runner\nRuntime Host :18091\nwasmtime, Docker, HTTP, gRPC"]
+            RAGT --> FEXEC --> ARUN
+        end
+        subgraph CTXMEM["Context and Memory"]
+            direction LR
+            CTANK["Data Tanks\nContext Service :18001\nembeddings, RAG, vector search"]
+            EMEM["Episodic Memory\nshort-term agent state"]
+        end
+        subgraph OBSV["Observability and Evals"]
+            direction LR
+            OTRACE["Tracing\nAudit Logs"]
+            OCOST["Cost and Token\nTracking"]
+            OEVAL["Evals\nLLM-as-judge"]
+            OHUM["Human Approval\ncallbacks"]
+        end
+    end
+
+    subgraph L4["4  MCP LAYER"]
+        direction TB
+        MCPS["darta mcp serve\ninvoke_agent\nsearch_tank\ndhil_route\nevaluate_policy"]
+        MCPX["External MCP Servers\nSAP, Salesforce\nCustom Tool APIs"]
+    end
+
+    subgraph L5["5  LLM PROVIDERS\nDhil Adaptive Router"]
+        direction TB
+        LPROV["Claude, GPT-4o, Gemini\nOllama, Azure OpenAI\nGroq, Mistral, Bedrock\nvLLM, LM Studio, Custom"]
+        LCOS["ContextOS\nrole bindings, cost limits\nPII routing, fallback chains"]
+    end
+
+    subgraph L6["6  DATA TANKS  —  Intelligence as Services"]
+        direction LR
+        DK["Domain Knowledge\nfiles, docs, PDFs\nDomain KB"]
+        DO["BDD and Ontology\nscenarios, concepts\nbusiness rules"]
+        DC["Code Atlas\ncodebase RAG\nForge index"]
+        DA["External API\nCRM, ERP pull\nwebhook push"]
+        DP["Policy Tank\ncompliance docs\nguardrails"]
+        DX["Custom Tank\nyour data\nyour rules"]
+    end
+
+    subgraph UC["VERTICAL USE CASES"]
+        direction LR
+        U1["Finance\nCompliance Copilot"]
+        U2["Healthcare\nClinical Assistant"]
+        U3["Customer Support\nAgent"]
+        U4["Supply Chain\nOptimizer"]
+        U5["Domain Expert\nAssistant"]
+        U6["Your Vertical\nyour workflows"]
+    end
+
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+    L4 --> L5
+    L6 --> L2
+    L3 --> UC
+```
+
+> **Key principle:** Treat knowledge, agents, and AI providers as composable services. The Gateway orchestrates. The Reasoning Agent decides. Your agents execute. Darta delivers the vertical.
+
+---
+
+## The Big Picture
 
 Every request in Darta passes through two distinct layers:
 
