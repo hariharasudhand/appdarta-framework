@@ -1,4 +1,4 @@
-# Install AppDarta Engine
+# Install Darta Platform
 
 ## Supported platforms
 
@@ -33,11 +33,11 @@ curl -fsSL https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/
 bash install_darta.sh
 ```
 
-The installer detects your OS and CPU, fetches available releases from GitHub, and installs your choice. When prompted, select **vDR.0.4** (the current release). No manual download needed.
+The installer detects your OS and CPU, fetches available releases from GitHub, and installs your choice. When prompted, select **vDR.0.5** (the current release). No manual download needed.
 
 You can discard `install_darta.sh` after the install completes.
 
-> **Already on vDR.0.3?** Run the same two commands again and select vDR.0.4. The installer upgrades in place.
+> **Already on vDR.0.4?** Run the same two commands again and select vDR.0.5. The installer upgrades in place.
 
 ## Install from a local package directory
 
@@ -50,6 +50,16 @@ bash scripts/install_framework.sh /path/to/appdarta-framework-linux-amd64
 ## Verify
 
 ```bash
-darta version
+darta --version
 darta framework current
 ```
+
+## Installing the runtime (Deploy/Run stage — optional)
+
+The Darta Platform ships in two parts. The install above gives you the full Design CLI (Setup → Build). When you're ready to run agents locally or deploy to cloud, install the runtime too:
+
+```bash
+darta runtime install
+```
+
+This downloads the `darta-wasmtime-host` binary for your platform and installs it to `~/.appdarta/runtime/current/`. After install, `darta --version` will show both the CLI version and the runtime version.

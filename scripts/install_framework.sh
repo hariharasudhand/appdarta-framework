@@ -104,8 +104,11 @@ install_package_dir() {
 
   write_launchers "$bin_dir"
 
-  echo "Installed AppDarta Engine to $framework_dir"
+  echo "Installed Darta Platform to $framework_dir"
   echo "Current engine -> $current_dir"
+  if [ ! -f "$framework_dir/bin/darta-wasmtime-host" ]; then
+    echo "Note: runtime not included in this release — required only for 'darta stack up' (Deploy/Run stage)."
+  fi
   echo "Add this to your shell profile if needed:"
   echo "  export APPDARTA_HOME=\"$appdarta_home\""
   echo "  export PATH=\"\$APPDARTA_HOME/bin:\$PATH\""

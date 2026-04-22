@@ -9,13 +9,13 @@
 
 # External Vertical Quickstart
 
-This is the public getting-started path for teams adopting AppDarta from released binaries and the public vertical template.
+This is the public getting-started path for teams adopting Darta from released binaries and the public vertical template.
 
 ## What You Install
 
-Install the AppDarta Engine once, then build your vertical on top of it.
+Install the Darta Platform once, then build your vertical on top of it.
 
-The engine gives you:
+The platform gives you:
 
 - `darta`
 - `appdarta-spec`

@@ -12,7 +12,7 @@ AppDarta provides three framework-managed runtime services. As a vertical develo
 | **runtime-host** | Executes WASM agent modules in isolation | 18091 |
 | **gateway** | Routes task invocations through your orchestration plan | 18110 |
 
-These services are framework-owned. `runtime-host` and `gateway` are shipped with AppDarta Engine. `context-service` is a framework-managed companion service and is started through the supported AppDarta service workflow rather than implemented inside your vertical repo.
+These services are framework-owned. `runtime-host` and `gateway` are shipped with Darta Platform. `context-service` is a framework-managed companion service and is started through the supported Darta service workflow rather than implemented inside your vertical repo.
 
 ---
 
