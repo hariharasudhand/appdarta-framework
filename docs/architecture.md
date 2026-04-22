@@ -12,16 +12,16 @@ You configure everything through specs and the CLI. You never need to touch the 
 flowchart TB
     subgraph design["Design Time — darta CLI + UI"]
         direction LR
-        CLI["darta CLI\n(analyze · design · build · validate)"]
+        CLI["darta CLI\nanalyze, design, build, validate"]
         UI["Wizard UI Shell\nlocalhost:7070"]
-        SPEC["Vertical Specs\nagents · flows · policies · tanks · ontology · BDD"]
+        SPEC["Vertical Specs\nagents, flows, policies, tanks, ontology, BDD"]
     end
 
     subgraph knowledge["Knowledge Layer — Data Tanks"]
         direction LR
-        SOURCES["Sources\nfiles · API · webhook · DB"]
-        TANK["DataTank\n(context-service :18001)"]
-        EMBED["Embeddings\n(RAG / vector)"]
+        SOURCES["Sources\nfiles, API, webhook, DB"]
+        TANK["DataTank\ncontext-service :18001"]
+        EMBED["Embeddings\nRAG / vector"]
         SOURCES --> TANK
         TANK --> EMBED
     end
@@ -29,25 +29,25 @@ flowchart TB
     subgraph orchestration["Orchestration Layer — Gateway :18110"]
         direction TB
         GW["Request Router"]
-        POLICY["Policy Engine\nplatform · enterprise · use-case"]
-        REASON["Reasoning & Decision Agent\nReasoningSpec — BDD + DSL + Ontology"]
+        POLICY["Policy Engine\nplatform, enterprise, use-case"]
+        REASON["Reasoning and Decision Agent\nReasoningSpec — BDD, DSL, Ontology"]
         GW --> POLICY
         GW --> REASON
-        REASON -->|matched rule → sync / async| GW
+        REASON -->|matched rule, sync or async| GW
     end
 
     subgraph llm["LLM Providers — Dhil"]
         direction LR
-        MR["Model Registry\nroles · providers · fallbacks"]
+        MR["Model Registry\nroles, providers, fallbacks"]
         COS["ContextOS\nAI governance config"]
-        DHIL["Adaptive Router\ncost · quality · latency"]
+        DHIL["Adaptive Router\ncost, quality, latency"]
         MR --> DHIL
         COS --> DHIL
     end
 
     subgraph exec["Runtime — Agent Execution"]
         direction LR
-        RH["Runtime Host :18091\nwasmtime · Docker · HTTP · gRPC"]
+        RH["Runtime Host :18091\nwasmtime, Docker, HTTP, gRPC"]
         AGENTS["Your Agents\nany language"]
         RH --> AGENTS
     end
@@ -55,22 +55,20 @@ flowchart TB
     subgraph rtsettings["Runtime Config — per project"]
         direction LR
         RTUI["darta runtime ui serve\nlocalhost:7071"]
-        RTCOS["Runtime ContextOS\n+ AI Settings"]
+        RTCOS["Runtime ContextOS\nAI Settings"]
         RTTANK["Runtime Tank\nconfig store"]
         RTUI --> RTCOS
         RTCOS --> RTTANK
     end
 
-    CLI -->|define + validate| SPEC
-    UI  -->|wizard actions|    SPEC
-    SPEC -->|loaded by|        GW
+    CLI -->|define and validate| SPEC
+    UI -->|wizard actions| SPEC
+    SPEC -->|loaded by| GW
     SPEC -->|tank definitions| TANK
-
     GW -->|fetch context| TANK
-    GW -->|route + invoke| RH
+    GW -->|route and invoke| RH
     RH -->|appdarta_ai_complete| DHIL
-    DHIL -->|provider call| Provider["AI Provider\nClaude · GPT · Ollama"]
-
+    DHIL -->|provider call| Provider["AI Provider\nClaude, GPT, Ollama"]
     rtsettings -->|governs at runtime| orchestration
     rtsettings -->|governs at runtime| llm
 ```
