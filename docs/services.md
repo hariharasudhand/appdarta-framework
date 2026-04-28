@@ -9,7 +9,6 @@ AppDarta provides three framework-managed runtime services. As a vertical develo
 | Service | Role | Default Port |
 |---|---|---|
 | **context-service** | Stores and retrieves tank data (embeddings, documents, episodic memory) | 18001 |
-| **context-service/memory** | Episodic memory REST API — observations, session summaries, context builder | 18001 |
 | **runtime-host** | Executes WASM agent modules in isolation | 18091 |
 | **gateway** | Routes task invocations through your orchestration plan | 18110 |
 
@@ -143,28 +142,6 @@ darta doctor --skip-stack
 ```
 
 ---
-
-## Episodic Memory Service
-
-The `context-service/memory` subsystem provides persistent agent memory across sessions. It runs as part of the context-service.
-
-### Endpoints
-
-| Endpoint | Method | Description |
-|---|---|---|
-| `/memory/observations` | POST | Record an observation for an agent session |
-| `/memory/observations` | GET | List recent observations (`?agent_id=&limit=`) |
-| `/memory/context/{agent_id}` | GET | Return the assembled Layer 0 memory context block |
-| `/memory/compress` | POST | Compress a session's observations into a `SessionSummary` |
-| `/memory/summaries/{agent_id}` | GET | List session summaries for an agent |
-
-### How It Works
-
-1. At the end of each agent session, `POST /memory/compress` distils observations into a `SessionSummary` via Dhil (`role: memory/compress` — routes to Ollama L1 first, Haiku L2 fallback).
-2. At the start of the next session, `GET /memory/context/{agent_id}` returns a Markdown block (Recent Observations → Details → Latest Session Summary).
-3. That block is prepended to the prompt as **Layer 0** before Dhil routing — enriching the agent's context without any code in the vertical.
-
-The memory service uses the same Postgres instance as the rest of the context-service when running in distributed mode. In local mode it uses SQLite.
 
 ## When You Need Multiple Instances
 

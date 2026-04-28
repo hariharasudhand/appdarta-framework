@@ -64,53 +64,11 @@ From the wizard UI: **AI Settings → ContextOS** — create a named config, ass
 For large context windows or low-bandwidth environments, Dhil supports offline context compression via LLMLingua.
 
 ```bash
-darta dhil linga install   # build Docker image (~350 MB first run)
+darta dhil linga install   # install pip dependencies
 darta dhil linga start     # start compression service on :7326
-darta dhil linga status    # check health
 ```
 
-When the compression service is running, Dhil automatically compresses prompts that exceed **4,000 tokens** before sending them to the AI tool. Compression ratio is approximately 50%.
-
-### Compression Stats in API Responses
-
-Since vDR.0.6, compression statistics are returned in every API usage response:
-
-```json
-{
-  "tier": "l2",
-  "model": "claude-haiku-4-5",
-  "tokens_in": 842,
-  "tokens_out": 310,
-  "cost_usd": 0.00127,
-  "compression_original_tokens": 3640,
-  "compression_saved_tokens": 2798,
-  "compression_ratio": 0.231
-}
-```
-
-- `tokens_in` — what the LLM was billed for (post-compression)
-- `compression_saved_tokens` — how many tokens Linga removed before the call
-- `compression_ratio` — compressed/original (lower = more compression)
-
-The **CloudUsageBadge** in the wizard UI shows `saved 2,798 tokens via compression` when Linga fired. The badge is amber for L2 cloud, orange for L3 cloud, and hidden for L1 local.
-
-### How It Fits the Pipeline
-
-```
-Memory Layer 0 (episodic context)
-  + ML enrichment
-  + ContextOS rules
-  ↓
-compressPromptIfNeeded()  ← Linga fires here if > 4,000 tokens
-  ↓
-Dhil tier routing  ← routes on compressed prompt size
-  ↓
-LLM call
-  ↓
-usage response  ← includes compression stats
-```
-
-The wizard UI shows an offline compression status indicator in AI Settings.
+When the compression service is running, Dhil automatically compresses context before sending it to the AI tool. The wizard UI shows an offline compression status indicator in AI Settings.
 
 ---
 

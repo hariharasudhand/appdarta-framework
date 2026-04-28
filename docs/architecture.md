@@ -385,35 +385,6 @@ See [ai-governance.md](docs/ai-governance.md) for full details.
 
 ---
 
-## Episodic Memory Layer (vDR.0.6)
-
-Agents gain persistent context across sessions via the memory subsystem in `context-service`. The flow is LLM-agnostic — compression uses Dhil routing, not a provider SDK.
-
-```
-End of session → observations recorded → MemoryCompressor → SessionSummary
-Start of session → MemoryContextBuilder.build() → Layer 0 block prepended to prompt
-                                                  → Linga compresses if > 4,000 tokens
-                                                  → Dhil routes to cheapest capable model
-```
-
-See [services.md](services.md#episodic-memory-service) for the REST API reference.
-
----
-
-## Multi-Agent Gateway (vDR.0.6)
-
-Multi-agent coordination is declared in `OrchestrationSpec` — not coded inside agents.
-
-Four policy types are supported: `validator`, `critique`, `consensus`, `supervisor`.
-
-Handlers can be async (fire-and-forget) with `continue-on-error` so enrichment and audit handlers never block the response path.
-
-`max-hops` caps the agent-to-agent handoff depth to prevent runaway chains.
-
-See [multi-agent-gateway.md](multi-agent-gateway.md) for the full YAML reference and worked example.
-
----
-
 ## Platform Architecture Diagrams
 
 Two Graphviz diagrams capture the full platform layout — Data Tanks on the left, Control Plane in the centre, Deployment and AI providers on the right. Regenerated SVGs live next to the `.dot` sources.
