@@ -9,7 +9,7 @@
 
 # Darta Platform
 
-> **Beta** — Active development. Early trials and feedback are welcome.
+> **Beta · vDR.0.6** — Active development. Early trials and feedback are welcome.
 
 **Darta** is a platform for teams who want to build governed, domain-specific AI applications — not just wire prompts together.
 
@@ -112,6 +112,8 @@ That repository is the entry point for vertical developers. It has everything to
 |---|---|
 | Architecture overview | [architecture.md](docs/architecture.md) |
 | Darta Dhil — AI routing | [dhil.md](docs/dhil.md) |
+| Multi-agent gateway — validator / critique / consensus | [multi-agent-gateway.md](docs/multi-agent-gateway.md) |
+| OPEA PromptSpec, compliance, and runtime metadata | [opea.md](docs/opea.md) |
 | Data tanks and knowledge retrieval | [data-tanks.md](docs/data-tanks.md) |
 | Domain ontology | [ontology.md](docs/ontology.md) |
 | Evaluation specs | [evals.md](docs/evals.md) |
