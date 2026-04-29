@@ -11,9 +11,21 @@
 
 > **Beta** — Active development. Early trials and feedback are welcome.
 
-**Darta** is a platform for teams who want to build governed, domain-specific AI applications — not just wire prompts together.
+**Darta** is a declarative platform for AI agents. You declare your domain — agents, data tanks, policies, orchestration, and flows — as versioned specs. The same specs drive the design-time wizard and the runtime gateway, so what you declare is what gets enforced.
 
 The idea behind the name: *app_in darta* — you bring your app into Darta. Your domain, your agents, your data. Darta provides the structure, the routing, the governance, and the execution environment that turns it into something production-shaped.
+
+Five resource kinds compose the model:
+
+| Spec | What it declares |
+|------|-----------------|
+| **AgentSpec** | what an agent is, what it can access, what model it uses |
+| **DataTankSpec** | what data exists, how it's partitioned, who can read it |
+| **PolicySpec** | what rules govern decisions, what requires human review |
+| **OrchestrationSpec** | how requests flow through the gateway, what gates them |
+| **FlowSpec** | how agents compose into multi-step workflows |
+
+Declare the domain. The platform reconciles.
 
 ---
 
