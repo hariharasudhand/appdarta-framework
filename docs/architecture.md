@@ -251,6 +251,34 @@ The platform reads your vertical's specs and agent logic at runtime. Nothing in 
 
 ---
 
+## Design Time and Runtime — One Vertical, Both Planes
+
+The same vertical specs govern both what happens at design time and what happens at runtime. There is no separate design system and runtime system — one vertical, both planes.
+
+| Spec | At design time | At runtime |
+|------|----------------|------------|
+| **OntologySpec** | Scaffold agent capabilities; wizard preview | Graph RAG retrieval; entity-linked context hydration |
+| **DataTankSpec** | Build and ingest knowledge sources | Context hydration per request |
+| **PolicySpec** | Validate rules; lifecycle signoff gate | Evaluated at every gateway invocation |
+| **AgentSpec** | Scaffold agent code; validate against ontology | Invoked by runtime host |
+| **BDD scenarios** | Drive use case and flow design | Constrain reasoning agent decisions |
+
+Design time is where you define your domain — entities, behaviors, rules, and knowledge sources. Runtime is where the platform enforces it. The specs are the contract between the two.
+
+---
+
+## Why Domain Comes First
+
+Most AI frameworks are technology-first: here are routing primitives, agent wiring, and model integrations — go build. That works for generic assistants. It does not work for domain-specific AI applications.
+
+To build a capable decision-making agent, you first need to answer: what decisions does this agent make? What data does it need? What rules govern its behavior? Those are domain questions. Without starting there, teams guess at capability scope and end up either over-engineering or missing what matters.
+
+**The bet Darta makes:** you should never need to fine-tune or domain-train a model to get domain-specific AI behavior. BDD scenarios, OntologySpec, PolicySpec, and Data Tanks encode your domain expertise in structured, versioned artifacts. A base LLM — Claude, GPT-4o, Ollama, any provider — reasons over domain-accurate context hydrated from your tanks and governed by your policies. The domain decision is a query and policy evaluation, not a training problem. New domain: new specs, not a new model.
+
+This is also why the domain model and AI routing are not separate concerns. Without the vertical, a "clinical decision" task and a "billing query" look identical to a router. With the vertical, the gateway knows that one requires compliance policy, a certified model, and human signoff — and the other does not. The routing is driven by domain knowledge.
+
+---
+
 ## Darta Dhil — AI Routing Layer
 
 Every AI action in the wizard UI and CLI goes through Dhil. Dhil routes the prompt to the right tool based on the role of the task, the tools you have registered, and the active ContextOS config.

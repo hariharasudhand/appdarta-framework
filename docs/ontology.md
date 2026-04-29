@@ -1,5 +1,19 @@
 # OntologySpec
 
+## Why ontology — what it enables for agents
+
+Most agent platforms let you connect data sources. The agent reasons over whatever it retrieves. The problem: agents don't know what they don't know. Without a declared domain model, an agent answering a question about a patient can only search by text similarity — it cannot ask "what appointments, medications, and alerts are related to this patient?" That relationship graph lives nowhere.
+
+OntologySpec is the answer. It declares your domain entities, relationships, and rules (`Patient → has-appointments → Appointment → prescribed → Medication`). The context service uses this graph to expand retrieval beyond matching documents to matching *context* — related entities, linked records, and structured domain facts.
+
+More importantly, OntologySpec is how you design agent capabilities from domain thinking. Before writing an AgentSpec, you declare what entities the agent works with and what relationships matter. The capabilities follow from the domain, not the other way around. This is what "domain-first" means in practice.
+
+> Without ontology, your agents retrieve documents. With it, they reason over your domain.
+
+---
+
+## What is OntologySpec
+
 OntologySpec is a **first-class YAML spec** (`kind: OntologySpec`) that describes domain **entity types**, **relationships**, optional **actors**, **rules**, and **extraction** settings. It is validated by **appdarta-spec** against `specs/core/OntologySpec.schema.json` (same contract as the `darta ontology validate` command).
 
 It complements the **dictionary** (field vocabulary) and **BDD** scenarios: the dictionary says *what fields exist*; BDD says *how behaviour is triggered*; OntologySpec says *which business objects exist and how they relate* — the graph RAG layer reasons over that model.

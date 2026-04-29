@@ -32,6 +32,16 @@ Darta brings:
 - a scanning and quality layer
 - a runtime that keeps your agents isolated and auditable
 
+**Three bets Darta makes:**
+
+1. **Domain-first.** You declare your domain model — BDD scenarios, ontology, policies — before building agents. The platform derives what agents need, what data they use, and what rules govern them. You cannot design a capable decision-making agent without first understanding the domain it operates in.
+
+2. **No domain training.** A base LLM (Claude, GPT-4o, Ollama — your choice) reasons over domain-accurate context from Data Tanks, governed by PolicySpec. Domain expertise lives in specs and knowledge assets, not model weights. New domain: new specs, not a new model.
+
+3. **Design to runtime — one vertical, both planes.** The same specs that drive the design wizard enforce runtime behavior at the gateway. There is no gap between what you designed and what runs.
+
+Darta does not replace your AI provider, runtime framework, or orchestration layer. It adds what none of them ship: lifecycle governance from business intent to deployed agent, with domain knowledge and policy enforcement baked in.
+
 ---
 
 ## The Products Inside Darta
@@ -114,6 +124,7 @@ That repository is the entry point for vertical developers. It has everything to
 | Darta Dhil — AI routing | [dhil.md](docs/dhil.md) |
 | Data tanks and knowledge retrieval | [data-tanks.md](docs/data-tanks.md) |
 | Domain ontology | [ontology.md](docs/ontology.md) |
+| OPEA compatibility | [opea.md](docs/opea.md) |
 | Evaluation specs | [evals.md](docs/evals.md) |
 | Runtime signals | [signals.md](docs/signals.md) |
 | AI governance and model roles | [ai-governance.md](docs/ai-governance.md) |

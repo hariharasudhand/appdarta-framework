@@ -1,121 +1,77 @@
-# OPEA Integration
+# OPEA Compatibility
 
-Darta Platform produces OPEA-compatible microservices. This document covers the DR-0.6 additions: PromptSpec for build-time metadata, runtime PromptMeta in the invocation envelope, and the updated compliance matrix.
+Darta agents are **OPEA-compatible**.
 
-For the full compliance runbook and export walkthrough, see the [compliance docs](../docs/opea/compliance.md) in the main platform repo.
+[OPEA (Open Platform for Enterprise AI)](https://opea-project.org) is an open standard for building composable AI microservices that work together in larger enterprise systems (megaservices). It is language-agnostic — the standard specifies required HTTP endpoints, health check shapes, tracing headers, and Kubernetes packaging. The GenAIComps Python library is the reference implementation, not a requirement.
+
+Darta implements the OPEA service interface so agents can be used as OPEA components without modification to your agent code.
 
 ---
 
-## PromptSpec — Build-Time Metadata
+## What this means in practice
 
-Agents can declare prompt metadata in the `opea:` block of their `AgentSpec` YAML:
+- Darta agents export OPEA-compatible wrappers automatically via `darta export opea`
+- L1 (PoC) and L2 (Production) compliance passes automatically for any agent, regardless of implementation language
+- Exported agents can be composed with other OPEA components — LLM services, retrieval, reranking, guardrails — in a megaservice pipeline
+- The choice of Go, Python, Rust, Spring Boot, Java, or WASM is yours; the export adapts to each
 
-```yaml
-opea:
-  enabled: true
-  service-type: LLM
-  input-datatype: TextDoc
-  output-datatype: TextDoc
-  prompt:
-    template-version: "1.0.0"
-    system-prompt-hash: "a3f7bc12"   # sha256 first 8 chars
-    context-strategy: rag            # "rag" | "memory" | "none"
-    max-context-tokens: 4096
-```
+---
 
-| Field | Type | Purpose |
+## OPEA service types Darta implements
+
+| OPEA Service | How Darta maps it | Status |
 |---|---|---|
-| `template-version` | semver string | Tracks which prompt template the agent uses — enables rollback if a prompt change causes regressions |
-| `system-prompt-hash` | 8-char sha256 | Detects accidental system prompt drift across environments |
-| `context-strategy` | string | Declares whether the agent uses RAG, episodic memory, or no external context |
-| `max-context-tokens` | int | Declared upper bound — used by OPEA compliance checks and cost estimation |
-
-The `prompt:` block is optional. Agents that omit it receive a `warning` in L2 compliance (see below) but are not blocked from export.
-
----
-
-## Export — opea-component.yaml
-
-When you run `darta export opea --agent <path>`, the `prompt:` block is included in the generated `opea-component.yaml` if any field is set:
-
-```yaml
-# generated opea-component.yaml (excerpt)
-metadata:
-  name: fraud-detection-agent
-spec:
-  serviceType: LLM
-  prompt:
-    templateVersion: "1.0.0"
-    contextStrategy: rag
-    maxContextTokens: 4096
-```
+| LLM | Domain agents via Dhil routing (`/v1/chat/completions`) | Live |
+| EMBEDDING | Context service ML layer (`/v1/embeddings`) | Live |
+| RETRIEVAL | Data Tank hydration (`/v1/retrieval`) | Live |
+| RERANKING | Tank hybrid retrieval (`/v1/reranking`) | Live |
+| DATAPREP | Tank ingestion (`/v1/dataprep`) | Live |
+| GUARDRAILS | PolicySpec evaluation (`/v1/guardrails`) | Live |
+| ASR / TTS | — | Not implemented |
 
 ---
 
-## L2 Compliance Check — prompt-metadata-declared
-
-Added to `config/opea/v1.5/compliance-matrix.yaml`:
-
-```yaml
-- id: prompt-metadata-declared
-  description: "Agent declares prompt.template-version in OPEA spec"
-  check: opea.prompt.template_version != ""
-  severity: warning
-```
-
-This check fires at L2 (not L1). Agents that predate DR-0.6 will show this warning but will not fail export. New agents should include `template-version` as a minimum.
-
-Check the compliance result for any agent:
+## Export
 
 ```bash
+# Basic export — wrapper + Dockerfile.opea + opea-component.yaml
 darta export opea --agent specs/agents/my-agent.yaml
-# or via the API:
-curl -s http://localhost:18110/api/opea/agents | jq '.[0].compliance'
+
+# With Kubernetes Helm chart
+darta export opea --agent specs/agents/my-agent.yaml --helm
+
+# With GMC pipeline CRD for megaservice wiring
+darta export opea --agent specs/agents/my-agent.yaml --helm --gmc
+
+# Target a specific OPEA version
+darta export opea --agent specs/agents/my-agent.yaml --version 1.5
+```
+
+Output is written to `{agent-dir}/opea/`:
+
+```
+opea/
+  wrapper/           (main.go, service.py, main.rs, or OpeaController.java)
+  Dockerfile.opea    (FROM your existing agent image)
+  opea-component.yaml
+  helm/              (if --helm)
+  gmc-pipeline.yaml  (if --gmc)
 ```
 
 ---
 
-## PromptMeta — Runtime Invocation Envelope
+## Compliance tiers
 
-After Dhil dispatches a prompt, `InvocationEnvelope` carries runtime metadata for every downstream handler:
-
-```json
-{
-  "prompt_meta": {
-    "tier_used": "l2",
-    "model_id": "claude-haiku-4-5",
-    "tokens_in": 842,
-    "tokens_out": 310,
-    "cost_usd": 0.00127
-  }
-}
-```
-
-This makes token and tier data available to:
-- The `token-limit` builtin handler — can enforce per-invocation budget
-- Audit log handler — persistent cost record per invocation
-- The UI `CloudUsageBadge` — shows tier, model, tokens, cost, and compression savings
-
-`PromptMeta` is populated from `dispatchLLMResponse` fields (built in the Dhil dispatch layer). It is `nil` when the invocation does not go through Dhil (e.g. direct HTTP agent calls).
+| Tier | Scope | Darta status |
+|---|---|---|
+| **L1 (PoC)** | Health check, containerisation, env-var config, basic throughput | Automatic |
+| **L2 (Production)** | OpenAI-compat endpoint, Helm chart, pod security, tracing, rate limiting, auth | Automatic |
+| **L3 (Enterprise)** | Full certification audit, SLA guarantees, OPEA catalogue registration | Future — Dhruvia Labs working with OPEA project on certification path |
 
 ---
 
-## Compression Stats in Usage Response
+## How Darta's domain model maps to OPEA
 
-When the Linga compression sidecar (`darta dhil linga start`) is running and the prompt exceeds 4,000 tokens, the `usage` object in API responses includes:
+Darta's GUARDRAILS endpoint (`/v1/guardrails`) runs the full OPA 3-layer PolicySpec evaluation — platform base policy, enterprise policy, and use-case policy. This is a stronger guarantee than typical guardrail layers: every invocation goes through the same policy pipeline that governs runtime execution.
 
-```json
-{
-  "tier": "l2",
-  "model": "claude-haiku-4-5",
-  "tokens_in": 842,
-  "tokens_out": 310,
-  "cost_usd": 0.00127,
-  "is_cloud": true,
-  "compression_original_tokens": 3640,
-  "compression_saved_tokens": 2798,
-  "compression_ratio": 0.231
-}
-```
-
-`tokens_in` always reflects what the LLM was actually billed for (post-compression). `compression_saved_tokens` is how many tokens Linga removed before the call.
+The RETRIEVAL endpoint returns context hydrated from Data Tanks, enriched by the OntologySpec graph. An OPEA megaservice that calls a Darta RETRIEVAL service gets not just matching documents but entity-linked context from the declared domain model.
