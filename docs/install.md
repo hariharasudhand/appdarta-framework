@@ -29,7 +29,7 @@ Then reload your shell or open a new terminal.
 Download and run the installer:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/main/scripts/install_framework.sh -o install_darta.sh
+curl -fsSL https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/master/scripts/install_framework.sh -o install_darta.sh
 bash install_darta.sh
 ```
 
