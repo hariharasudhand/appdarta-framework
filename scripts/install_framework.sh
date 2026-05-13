@@ -88,10 +88,12 @@ install_package_dir() {
   local framework_dir="$releases_dir/$release_version"
   local current_dir="$appdarta_home/framework/current"
   local bin_dir="$appdarta_home/bin"
+  local staged_dir="$releases_dir/.install-${release_version}.$$"
+  local backup_dir="$releases_dir/.old-${release_version}.$$"
 
   mkdir -p "$releases_dir" "$bin_dir"
-  rm -rf "$framework_dir"
-  cp -R "$src_dir" "$framework_dir"
+  rm -rf "$staged_dir" "$backup_dir"
+  cp -R "$src_dir" "$staged_dir"
   # Remove current: unlink if symlink, otherwise move aside to avoid "Operation not permitted"
   # warnings from trying to delete files that are in use by the running framework process.
   if [ -L "$current_dir" ]; then
@@ -100,7 +102,12 @@ install_package_dir() {
     mv "$current_dir" "${current_dir}.old.$$" 2>/dev/null || rm -rf "$current_dir" || true
     rm -rf "${current_dir}.old.$$" 2>/dev/null || true
   fi
+  if [ -e "$framework_dir" ]; then
+    mv "$framework_dir" "$backup_dir" 2>/dev/null || rm -rf "$framework_dir"
+  fi
+  mv "$staged_dir" "$framework_dir"
   ln -s "$framework_dir" "$current_dir" 2>/dev/null || cp -R "$framework_dir" "$current_dir"
+  rm -rf "$backup_dir" 2>/dev/null || true
 
   write_launchers "$bin_dir"
 
