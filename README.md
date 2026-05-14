@@ -11,9 +11,62 @@
 
 > **Beta** — Active development. Early trials and feedback are welcome.
 
-**Darta** is a declarative platform for AI agents. You declare your domain — agents, data tanks, policies, orchestration, and flows — as versioned specs. The same specs drive the design-time wizard and the runtime gateway, so what you declare is what gets enforced.
+**Darta** is a declarative AI framework and enterprise agentic platform for building governed AI systems. You declare your domain — agents, data tanks, policies, orchestration, ontology, and flows — as versioned specs. The same specs drive the design-time wizard and the runtime gateway, so what you declare is what gets enforced.
+
+At a practical level, Darta acts as an enterprise agent orchestration layer, an AI gateway, and an LLM workflow runtime for teams that want spec-driven AI instead of ad hoc prompt glue. It is designed for policy-driven AI execution, multi-agent orchestration, agent governance, ontology-driven AI, BDD and DSL-driven domain modeling, and enterprise RAG orchestration in one platform.
 
 The idea behind the name: *app_in darta* — you bring your app into Darta. Your domain, your agents, your data. Darta provides the structure, the routing, the governance, and the execution environment that turns it into something production-shaped.
+
+If you are evaluating enterprise agent orchestration, declarative AI frameworks, governed multi-agent runtimes, AI gateways, or enterprise RAG orchestration platforms, this is the category Darta is built for.
+
+## Who Darta Is For
+
+- **For developers:** declare workflows, AI roles, runtime routing, policies, ontology, and retrieval as specs instead of hardcoding behavior across scattered services.
+- **For product and platform teams:** define domain-centric agentic systems that stay aligned with business rules, approval flows, and operational controls.
+- **For enterprise decision-makers:** move from isolated AI experiments to policy-governed execution, reusable patterns, and auditable rollout across teams and use cases.
+
+## Platform And Framework
+
+Darta is delivered as a **platform** for developers and teams, powered by the **Darta Framework** underneath.
+
+- The **platform** is what you install, run, and use to declare domain flows across the software and operations lifecycle.
+- The **framework** is the underlying declarative engine and component model that powers those flows and supports enterprise and partner-led extensions.
+
+This means Darta is both:
+
+- a developer-facing platform for building and operating domain-specific agentic systems
+- a framework-backed foundation for enterprise-grade rollout, customization, and vertical packaging
+
+## Quick Install
+
+```bash
+export APPDARTA_HOME="${APPDARTA_HOME:-$HOME/.appdarta}"
+export PATH="$APPDARTA_HOME/bin:$PATH"
+curl -fsSL https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/master/scripts/install_framework.sh -o install_darta.sh
+bash install_darta.sh
+```
+
+When prompted, select `vDR.0.5` (the current public release). Full install notes: [docs/install.md](docs/install.md)
+
+## Product Screens
+
+| Use case editor | Clarify architecture |
+|---|---|
+| ![Darta use case editor](https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/master/darta-01-use-case-editor.png) | ![Darta clarify architecture](https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/master/darta-02-clarify-architecture.png) |
+
+| Success metrics dictionary | Design topology |
+|---|---|
+| ![Darta success metrics dictionary](https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/master/darta-03-success-metrics-dictionary.png) | ![Darta design topology](https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/master/darta-04-design-topology.png) |
+
+| Clarification report | Runtime role bindings |
+|---|---|
+| ![Darta clarification report](https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/master/darta-05-clarification-report.png) | ![Darta runtime role bindings](https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/master/darta-06-runtime-role-bindings.png) |
+
+| Telemetry report | Runtime governance |
+|---|---|
+| ![Darta telemetry report](https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/master/darta-07-telemetry-report.png) | ![Darta runtime governance](https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/master/darta-08-runtime-governance.png) |
+
+These screens show the shape of Darta across design-time and runtime: use-case definition, architecture clarification, flow design, runtime bindings, telemetry, and governance.
 
 Five resource kinds compose the model:
 
@@ -53,6 +106,39 @@ Darta brings:
 3. **Design to runtime — one vertical, both planes.** The same specs that drive the design wizard enforce runtime behavior at the gateway. There is no gap between what you designed and what runs.
 
 Darta does not replace your AI provider, runtime framework, or orchestration layer. It adds what none of them ship: lifecycle governance from business intent to deployed agent, with domain knowledge and policy enforcement baked in.
+
+## How To Categorize Darta
+
+If you are evaluating platforms in this space, Darta fits these categories:
+
+- declarative AI framework
+- enterprise agent orchestration
+- agent governance
+- LLM workflow runtime
+- spec-driven AI platform
+- enterprise agentic platform
+- AI gateway
+- policy-driven AI execution
+- multi-agent orchestration
+- ontology-driven AI
+- enterprise RAG orchestration
+
+In plain terms: Darta gives enterprises and platform teams a way to describe AI systems as specs, govern them through policy, route them through a runtime gateway, and operate them as production software.
+
+## How Darta Compares
+
+Darta is not a LangChain replacement. It sits above or alongside builder SDKs and model frameworks. You can use LangChain, Semantic Kernel, custom services, or direct provider SDKs inside a Darta vertical.
+
+| Platform | What it is strongest at | Where Darta differs |
+|---|---|---|
+| LangChain | developer SDKs for chains, tools, retrieval, and app logic | Darta is a declarative agentic AI platform for spec-defined domains, enterprise agent orchestration, policy enforcement, and governed runtime execution |
+| CrewAI | team-style multi-agent coordination patterns | Darta adds policy-driven AI execution, gateway-level controls, domain specs, and production lifecycle governance |
+| AutoGen | agent conversation patterns and experimentation | Darta focuses more on enterprise operating structure: domain declarations, approval gates, runtime control, and auditable orchestration |
+| Semantic Kernel | AI app composition with strong Microsoft ecosystem fit | Darta is broader at the platform layer: declarative specs, AI gateway routing, ontology-driven AI, and enterprise RAG orchestration |
+
+If you are searching for a LangChain alternative for enterprise governance, a CrewAI alternative for production controls, or a multi-agent platform with an AI gateway and policy layer, this is the category Darta is built for.
+
+Darta also aligns well with teams adopting open enterprise AI architectures. See [docs/opea.md](docs/opea.md) for OPEA compatibility notes.
 
 ---
 
