@@ -33,11 +33,11 @@ curl -fsSL https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/
 bash install_darta.sh
 ```
 
-The installer detects your OS and CPU, fetches available releases from GitHub, and installs your choice. When prompted, select **vDR.0.5** (the current release). No manual download needed.
+The installer detects your OS and CPU, fetches available releases from GitHub, and installs your choice. When prompted, select **vDR.0.14** (the current release). No manual download needed.
 
 You can discard `install_darta.sh` after the install completes.
 
-> **Already on vDR.0.4?** Run the same two commands again and select vDR.0.5. The installer upgrades in place.
+> **Already on vDR.0.13?** Run the same two commands again and select vDR.0.14. The installer upgrades in place.
 
 ## Install from a local package directory
 
@@ -53,6 +53,26 @@ bash scripts/install_framework.sh /path/to/appdarta-framework-linux-amd64
 darta --version
 darta framework current
 ```
+
+## Configure AI providers
+
+Run the AI provider wizard to register your cloud API keys and/or a private Ollama endpoint:
+
+```bash
+darta config ai
+```
+
+The wizard walks through Anthropic, OpenAI, Gemini, and Private / Local LLM (Ollama). For each Ollama endpoint you must supply the server URL — no silent fallback to localhost.
+
+To set up a private team inference server (shared Ollama on Ubuntu) before running the wizard:
+
+```bash
+darta dhil l1 setup
+```
+
+This detects your SSH keys, deploys Ollama + nginx to the server, registers an admin API key, and saves the endpoint and key directly to `~/.appdarta/ai.yaml`.
+
+---
 
 ## Installing the runtime (Deploy/Run stage — optional)
 

@@ -123,3 +123,79 @@ Install Graphviz to enable diagram rendering:
 ```bash
 darta dhil setup graphviz
 ```
+
+---
+
+## DHil L1 — Enterprise Private Inference
+
+DHil L1 is a shared Ollama server that runs on enterprise infrastructure — a dedicated Ubuntu machine accessible to the whole team. It is not meant to run on individual developer machines.
+
+The server is secured by an nginx reverse proxy (port 11435) that validates per-developer Bearer tokens. Ollama itself stays bound to localhost; only the proxy is externally accessible.
+
+### Why DHil L1
+
+- **One server, whole team** — no per-developer GPU setup
+- **Lightweight models** — phi3.5 (~4 GB), phi4-mini (~2 GB), qwen2.5-coder (~4 GB) run well on a shared CPU/GPU machine
+- **Cost-free inference** — no per-token cloud billing for design and local tasks
+- **Bearer-keyed access** — each developer gets their own revocable key; no shared password
+
+### Setup
+
+`darta dhil l1 setup` is the single command that handles everything:
+
+```bash
+darta dhil l1 setup
+```
+
+The wizard asks:
+
+```
+Server IP or hostname:
+SSH user [ubuntu]:
+SSH port [22]:
+Public domain for HTTPS? (optional, e.g. dhil.yourco.com):
+```
+
+Then it:
+1. Detects your local SSH keys — offers `ssh-keygen` if none exist, `ssh-copy-id` if the key is not yet authorised
+2. Generates the server setup script internally
+3. SCPs the script to the server and runs it via SSH — streams output live
+4. Installs Ollama, configures nginx, pulls default models (phi3.5, nomic-embed-text), sets UFW firewall rules
+5. Generates an admin API key and registers it on the server
+6. Saves the server endpoint and key to `~/.appdarta/ai.yaml` under the `ollama` provider
+
+After setup completes, `darta config ai` and all AI dispatch use the DHil L1 endpoint automatically — no separate configuration step needed.
+
+For air-gapped or manual installs, print the bash script without deploying:
+
+```bash
+darta dhil l1 setup --print-script
+darta dhil l1 setup --print-script --domain dhil.yourco.com --email admin@yourco.com
+```
+
+### Key management (run on the server)
+
+Each developer needs their own API key. Keys are managed on the server by an admin:
+
+```bash
+sudo darta dhil l1 keys create --dev alice    # generate + register key for alice
+sudo darta dhil l1 keys list                  # list all registered keys
+sudo darta dhil l1 keys revoke --dev alice    # deactivate alice's key
+```
+
+The admin shares each key with the developer offline (Slack DM, 1Password, email). Developers add it via `darta config ai` → Private / Local LLM → auth token.
+
+### Client configuration
+
+Client-side configuration (endpoint + auth token) lives in `~/.appdarta/ai.yaml` under the `ollama` provider entry — the same place that `darta config ai` writes to. There is no separate DHil L1 config file.
+
+### CLI Reference
+
+```bash
+darta dhil l1 setup                          # full SSH deploy wizard
+darta dhil l1 setup --print-script           # print setup bash script to stdout
+darta dhil l1 keys create --dev <name>       # generate + register a developer key
+darta dhil l1 keys list                      # list registered keys
+darta dhil l1 keys revoke --dev <name>       # deactivate a key
+darta dhil l1 test                           # probe the configured endpoint
+```

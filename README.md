@@ -46,7 +46,7 @@ curl -fsSL https://raw.githubusercontent.com/hariharasudhand/appdarta-framework/
 bash install_darta.sh
 ```
 
-When prompted, select `vDR.0.5` (the current public release). Full install notes: [docs/install.md](docs/install.md)
+When prompted, select `vDR.0.14` (the current public release). Full install notes: [docs/install.md](docs/install.md)
 
 ## Product Screens
 
