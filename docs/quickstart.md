@@ -54,6 +54,40 @@ That path proves:
 - the project contracts validate
 - the vertical can build and run through the framework lifecycle
 
+## DHIL-DT Server
+
+Darta routes AI work through three endpoints on a DHIL-DT server:
+
+- `--dt` — DHIL-DT design-time routing server. Used by `darta dhil-dt policy` and the UI wizard's AI routing panel.
+- `--l1` — Layer-1 model endpoint (Ollama-compatible). Used for cheap first-pass routing, classification, and local drafting.
+- `--litellm` — LiteLLM proxy endpoint for cloud/provider model calls.
+
+### Connect to a public shared server
+
+```bash
+darta framework set-server public \
+  --dt http://<server-ip>:8080 \
+  --l1 http://<server-ip>:11435 \
+  --litellm http://<server-ip>:4000
+
+darta framework use public
+darta framework status
+darta dhil-dt policy
+```
+
+Contact Dhruvia Labs for the current public server address.
+
+### Run DHIL-DT locally instead
+
+```bash
+darta dhil-dt serve --port 8080
+export DHIL_DT_SERVER=http://127.0.0.1:8080
+
+darta dhil-dt policy
+```
+
+---
+
 ## When To Start Local Services
 
 Some vertical flows only need validation, build, and run. Others also need local framework services.
@@ -127,6 +161,8 @@ If you want a real vertical validation scenario rather than a generic quickstart
 ```bash
 darta run-wizard
 darta doctor --skip-stack
+darta framework status
+darta dhil-dt policy
 darta project inspect --file .
 darta analyze inspect --project .
 darta design inspect --project .

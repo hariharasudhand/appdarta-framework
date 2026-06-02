@@ -38,14 +38,26 @@ They run through the same framework-owned path: lifecycle inspection → tank-ba
 # 1. Install
 bash scripts/install_framework.sh
 
-# 2. Create a project from the vertical template
+export APPDARTA_HOME="${APPDARTA_HOME:-$HOME/.appdarta}"
+export PATH="$APPDARTA_HOME/bin:$PATH"
+
+# 2. Point darta at a DHIL-DT server (public shared or local)
+darta framework set-server public \
+  --dt http://<server-ip>:8080 \
+  --l1 http://<server-ip>:11435 \
+  --litellm http://<server-ip>:4000
+darta framework use public
+darta framework status
+
+# 3. Create a project from the vertical template
 git clone https://github.com/hariharasudhand/appdarta-vertical-template.git my-vertical
 cd my-vertical
 darta run-wizard
 
-# 3. Move through the lifecycle
+# 4. Move through the lifecycle
 darta version
 darta doctor --skip-stack
+darta dhil-dt policy
 darta project inspect --file .
 darta analyze inspect --project .
 darta design inspect --project .

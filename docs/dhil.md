@@ -83,6 +83,42 @@ This keeps the UI responsive. You only pay the cost of the bigger model when you
 
 ---
 
+## L1 Local Ollama Server
+
+For team-local inference, Darta supports a small Ollama-only L1 server in front of Dhil. The default setup is intentionally conservative for CPU-only Ubuntu servers.
+
+Recommended default pair:
+
+| Dhil tool | Default model | Roles | Purpose |
+|---|---|---|---|
+| `dhil-l1-general` | `llama3.2:3b` | `local`, `analyze`, `clarify`, `decompose` | classification, routing, summarization, prompt cleanup |
+| `dhil-l1-coder` | `qwen2.5-coder:7b` | `implementation`, `review`, `shell` | code explanation, small edits, script/shell help |
+
+The models can both stay pulled on disk, but the server should load only one at a time by default:
+
+```bash
+OLLAMA_MAX_LOADED_MODELS=1
+OLLAMA_NUM_PARALLEL=1
+OLLAMA_KEEP_ALIVE=2m
+OLLAMA_MAX_QUEUE=16
+```
+
+This avoids memory spikes on a 4 vCPU / 15 GB RAM / no-GPU box. An 8 GB swap file is enough as a safety net, not as a performance plan. If RAM is below 12 GB, use `qwen2.5-coder:3b` for `l1-coder`; below 8 GB, skip the coder model.
+
+Use:
+
+```bash
+darta dhil l1 setup
+darta dhil l1 setup --role general
+darta dhil l1 setup --role coder
+```
+
+AI Settings should show these as two separate local tools: **L1 General** and **L1 Coder**. Public L2/L3 providers remain available for complex architecture, long-context reasoning, and high-risk changes. Dhil routes by role, tier, and skills, so this is not a hard one-model-per-category limit.
+
+For demos or small teams, keep queueing enabled rather than raising concurrency aggressively. Five light users are acceptable if requests are queued, but simultaneous long code generations on CPU will be slow. Prefer server health logs, queue depth, and Ollama/systemd logs over trying to keep every request instant.
+
+---
+
 ## CLI Reference
 
 ```bash
@@ -122,80 +158,4 @@ Install Graphviz to enable diagram rendering:
 
 ```bash
 darta dhil setup graphviz
-```
-
----
-
-## DHil L1 — Enterprise Private Inference
-
-DHil L1 is a shared Ollama server that runs on enterprise infrastructure — a dedicated Ubuntu machine accessible to the whole team. It is not meant to run on individual developer machines.
-
-The server is secured by an nginx reverse proxy (port 11435) that validates per-developer Bearer tokens. Ollama itself stays bound to localhost; only the proxy is externally accessible.
-
-### Why DHil L1
-
-- **One server, whole team** — no per-developer GPU setup
-- **Lightweight models** — phi3.5 (~4 GB), phi4-mini (~2 GB), qwen2.5-coder (~4 GB) run well on a shared CPU/GPU machine
-- **Cost-free inference** — no per-token cloud billing for design and local tasks
-- **Bearer-keyed access** — each developer gets their own revocable key; no shared password
-
-### Setup
-
-`darta dhil l1 setup` is the single command that handles everything:
-
-```bash
-darta dhil l1 setup
-```
-
-The wizard asks:
-
-```
-Server IP or hostname:
-SSH user [ubuntu]:
-SSH port [22]:
-Public domain for HTTPS? (optional, e.g. dhil.yourco.com):
-```
-
-Then it:
-1. Detects your local SSH keys — offers `ssh-keygen` if none exist, `ssh-copy-id` if the key is not yet authorised
-2. Generates the server setup script internally
-3. SCPs the script to the server and runs it via SSH — streams output live
-4. Installs Ollama, configures nginx, pulls default models (phi3.5, nomic-embed-text), sets UFW firewall rules
-5. Generates an admin API key and registers it on the server
-6. Saves the server endpoint and key to `~/.appdarta/ai.yaml` under the `ollama` provider
-
-After setup completes, `darta config ai` and all AI dispatch use the DHil L1 endpoint automatically — no separate configuration step needed.
-
-For air-gapped or manual installs, print the bash script without deploying:
-
-```bash
-darta dhil l1 setup --print-script
-darta dhil l1 setup --print-script --domain dhil.yourco.com --email admin@yourco.com
-```
-
-### Key management (run on the server)
-
-Each developer needs their own API key. Keys are managed on the server by an admin:
-
-```bash
-sudo darta dhil l1 keys create --dev alice    # generate + register key for alice
-sudo darta dhil l1 keys list                  # list all registered keys
-sudo darta dhil l1 keys revoke --dev alice    # deactivate alice's key
-```
-
-The admin shares each key with the developer offline (Slack DM, 1Password, email). Developers add it via `darta config ai` → Private / Local LLM → auth token.
-
-### Client configuration
-
-Client-side configuration (endpoint + auth token) lives in `~/.appdarta/ai.yaml` under the `ollama` provider entry — the same place that `darta config ai` writes to. There is no separate DHil L1 config file.
-
-### CLI Reference
-
-```bash
-darta dhil l1 setup                          # full SSH deploy wizard
-darta dhil l1 setup --print-script           # print setup bash script to stdout
-darta dhil l1 keys create --dev <name>       # generate + register a developer key
-darta dhil l1 keys list                      # list registered keys
-darta dhil l1 keys revoke --dev <name>       # deactivate a key
-darta dhil l1 test                           # probe the configured endpoint
 ```

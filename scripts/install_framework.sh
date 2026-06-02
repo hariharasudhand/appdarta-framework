@@ -21,6 +21,16 @@ require_command() {
   fi
 }
 
+copy_tree() {
+  local src="$1"
+  local dest="$2"
+  if [ "$(uname -s)" = "Darwin" ]; then
+    ditto "$src" "$dest"
+  else
+    cp -R "$src" "$dest"
+  fi
+}
+
 detect_platform() {
   local os arch
   os="$(uname -s | tr '[:upper:]' '[:lower:]')"
@@ -93,20 +103,36 @@ install_package_dir() {
 
   mkdir -p "$releases_dir" "$bin_dir"
   rm -rf "$staged_dir" "$backup_dir"
-  cp -R "$src_dir" "$staged_dir"
+  copy_tree "$src_dir" "$staged_dir"
+  if [ ! -f "$staged_dir/share/release/manifest.json" ]; then
+    echo "failed to stage framework package into $staged_dir" >&2
+    exit 1
+  fi
   # Remove current: unlink if symlink, otherwise move aside to avoid "Operation not permitted"
   # warnings from trying to delete files that are in use by the running framework process.
   if [ -L "$current_dir" ]; then
     rm -f "$current_dir"
   elif [ -d "$current_dir" ]; then
-    mv "$current_dir" "${current_dir}.old.$$" 2>/dev/null || rm -rf "$current_dir" || true
+    if ! mv "$current_dir" "${current_dir}.old.$$" 2>/dev/null; then
+      rm -rf "$current_dir"
+    fi
     rm -rf "${current_dir}.old.$$" 2>/dev/null || true
   fi
   if [ -e "$framework_dir" ]; then
-    mv "$framework_dir" "$backup_dir" 2>/dev/null || rm -rf "$framework_dir"
+    if ! mv "$framework_dir" "$backup_dir" 2>/dev/null; then
+      rm -rf "$framework_dir"
+    fi
   fi
   mv "$staged_dir" "$framework_dir"
-  ln -s "$framework_dir" "$current_dir" 2>/dev/null || cp -R "$framework_dir" "$current_dir"
+  if [ ! -f "$framework_dir/share/release/manifest.json" ]; then
+    echo "failed to move staged framework into $framework_dir" >&2
+    exit 1
+  fi
+  ln -s "$framework_dir" "$current_dir"
+  if [ ! -L "$current_dir" ]; then
+    echo "failed to link current framework release at $current_dir" >&2
+    exit 1
+  fi
   rm -rf "$backup_dir" 2>/dev/null || true
 
   write_launchers "$bin_dir"
