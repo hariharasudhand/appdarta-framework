@@ -75,6 +75,30 @@ darta framework status
 darta dhil-dt policy
 ```
 
+### Step 2 — L1 authentication (shared servers)
+
+Protected L1 endpoints require a per-developer API key. Your server admin creates one on the L1 host:
+
+```bash
+# On the L1 Ubuntu server (as root):
+darta dhil l1 keys create --dev <your-name>
+```
+
+Configure your machine with the issued key:
+
+```bash
+darta dhil l1 configure --key <key-from-admin>
+darta dhil l1 test
+```
+
+Or pass the key when setting the server URL:
+
+```bash
+darta framework set-server public --l1 http://<server-ip>:11435 --l1-key <key>
+```
+
+You can also configure the key in the UI: **AI Settings → Routing → L1 authentication**.
+
 Contact Dhruvia Labs for the current public server address.
 
 ### Run DHIL-DT locally instead
@@ -216,6 +240,12 @@ darta enterprise list
 
 ---
 
+## Spec coverage and release scope
+
+The wizard **Build** stage shows **Spec coverage** (prompt linkage % and build execution %). At **Clarify**, define vertical-project release scope in `specs/analysis/delivery-scope.yaml` (in-scope vs out-of-scope for this release). After Design, run `darta build scope-sync --project .` to compile `specs/build/build-scope.yaml` with topology `node_ids` and dev assignments. Coverage uses release scope when present (`?view=release` on `/api/wizard/spec-coverage`).
+
+---
+
 ## UI-Driven Wizard
 
 All lifecycle phases are also accessible through the browser-based wizard:
@@ -227,6 +257,82 @@ darta ui serve
 The wizard covers: Setup → Use Cases → Clarify → Design → Build → Deploy.
 
 Each phase mirrors the corresponding CLI commands and writes to the same YAML spec files. The Design panel additionally provides AI self-assessment of enterprise reuse, sequence diagram generation (inline SVG, saved as `.swim` files), and per-component build prompts.
+
+In **Build → Q-Prompt Studio**, set **runtime packaging** (process, Docker, Docker+WASM, or Cloud Run) per topology block before generating. Packaging is injected into prompt text and drives template overlays for connectors and deploy artifacts. Use **Generation routing** in the studio to confirm L1 (Ollama) vs LiteLLM (L2/L3) reachability (`darta framework status`).
+
+### Packaging card (per node)
+
+Each prompt row in Q-Prompt Studio shows a **PACKAGING** chip in the editor toolbar. Open it to set:
+
+| Control | Values | Effect |
+|---|---|---|
+| **Runtime** | Process, Docker, Docker+WASM, Cloud Run | Chooses runtime overlay templates during generate (for example `agent-runtime-docker-go` vs `agent-runtime-process`) |
+| **Port** | Free-form (e.g. `8081`) | Written to `.appdarta/build/packaging.json` and synced into the port registry |
+| **Protocol** | HTTP, gRPC, Both | Drives handler and connector constraints in generated prompts |
+
+Changes persist automatically to `.appdarta/build/packaging.json` via `POST /api/build/packaging`. The same runtime choice is appended to prompt text before generation so coding agents inherit deploy constraints.
+
+Use **StrategyPreview** (below the prompt editor) to confirm the CLI-selected template and runtime overlay match what you chose on the packaging card before clicking **Generate**.
+
+### packGroups
+
+When several agents deploy together (same Docker network or shared profile), group them in **packGroups** inside `packaging.json`:
+
+```json
+"packGroups": {
+  "review-cohort": {
+    "members": ["agent:reviewer", "agent:auditor"],
+    "runtime": "docker",
+    "profile": "pack-review"
+  }
+}
+```
+
+Each member keeps its own port — ports must be distinct within the group. **Apply to group** on the packaging chip copies the active node's runtime/port/protocol to all members. The CLI exposes compose profiles at `GET /api/build/packaging/compose` (one profile per packGroup, shared network name `appdarta-<group>`).
+
+### Port registry
+
+Project-level ports and deploy intent live in `config/project/runtime.yaml`:
+
+```yaml
+deployIntent: docker-compose
+nginxStrategy: gateway-edge
+portRegistry:
+  gateway: "8080"
+  ui: "3000"
+  agents:
+    agent:reviewer: "8081"
+```
+
+With `nginxStrategy: gateway-edge`, only the **gateway** port is the public edge; UI and agent ports are internal upstreams. Sync from packaging in the UI or via API:
+
+```bash
+# equivalent to UI "Sync from packaging"
+curl -s -X POST "http://127.0.0.1:8787/api/build/port-registry?project=." \
+  -H 'Content-Type: application/json' \
+  -d '{"syncFromPackaging": true}'
+```
+
+Workspace deploy intent also flows through `build/pattern-selection.yaml` (`deployTarget`) — keep it aligned with `runtime.yaml` `deployIntent`.
+
+### Ask Dhil in prompts
+
+**Ask Dhil** is available from the wizard inspector (tier picker + panel) on every stage, including **Build**. In Q-Prompt Studio, questions can include build context; responses return **action chips** when applicable:
+
+| Question pattern | Action |
+|---|---|
+| `rewrite prompt` / `improve prompt` | **Apply suggested prompt patch** |
+| `@_review` / `review checkpoint` | **Insert review checkpoint row text** |
+| `link use case` | **Link suggested use case(s)** |
+| `show file` / `fetch artifact` | **Open related build artifact** |
+
+Pass `node_id` and `row_id` when calling `/api/ask` from custom tooling so actions target the correct prompt row. Example:
+
+```bash
+curl -s -X POST "http://127.0.0.1:8787/api/ask?project=." \
+  -H 'Content-Type: application/json' \
+  -d '{"question":"rewrite prompt for grpc handlers","stage":"build","node_id":"agent:reviewer","row_id":"skeleton"}'
+```
 
 ---
 

@@ -49,6 +49,10 @@ darta framework set-server public \
 darta framework use public
 darta framework status
 
+# 2b. L1 API key (shared servers — ask admin for key)
+darta dhil l1 configure --key <key-from-admin>
+darta dhil l1 test
+
 # 3. Create a project from the vertical template
 git clone https://github.com/hariharasudhand/appdarta-vertical-template.git my-vertical
 cd my-vertical
@@ -111,3 +115,21 @@ darta deploy plan --project .
 - Broader multi-agent orchestration beyond deterministic patterns
 - Deeper shared-enterprise tank search UX
 - Third-vertical expansion beyond finance and healthcare
+
+---
+
+## Build Studio integration review (pre-release)
+
+Run before merging Build Studio tracks or cutting a framework release:
+
+```bash
+bash scripts/build_studio_packaging_verify.sh
+```
+
+Checklist:
+
+- [ ] **All tracks merged** — packaging UI (Track C), generation/StrategyPreview, and scope-sync/traceability land together; no half-wired API routes in `darta ui serve`.
+- [ ] **StrategyPreview matches CLI** — for a sample node, UI StrategyPreview `templateName`, `extensionTemplates`, and `runtimePackaging` match `resolveBuildGeneration` / generate output (same overlay family for the chosen packaging runtime).
+- [ ] **No orphan UI options** — every packaging-card runtime (process, Docker, Docker+WASM, Cloud Run) maps to a template overlay; every Ask Dhil action chip has a handler; deploy intent in the UI writes `build/pattern-selection.yaml` and stays consistent with `config/project/runtime.yaml`.
+- [ ] **packaging.json round-trip** — `GET /api/build/packaging` after save returns the same per-node entries and `packGroups`.
+- [ ] **Distinct packGroup ports** — each member in a packGroup has a unique port; `GET /api/build/packaging/compose` shows no duplicate host ports within a profile.

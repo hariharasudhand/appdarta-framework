@@ -74,6 +74,30 @@ darta framework use public
 darta framework status
 ```
 
+### Step 2 — L1 authentication (shared servers)
+
+Protected L1 endpoints require a per-developer API key. Your server admin creates one on the L1 host:
+
+```bash
+# On the L1 Ubuntu server (as root):
+darta dhil l1 keys create --dev <your-name>
+```
+
+Configure your machine with the issued key (endpoint is prefilled from `framework use`):
+
+```bash
+darta dhil l1 configure --key <key-from-admin>
+darta dhil l1 test
+```
+
+Or combine endpoint setup and key in one step:
+
+```bash
+darta framework set-server public --l1 http://<server-ip>:11435 --l1-key <key>
+```
+
+You can also configure the key in the UI: **AI Settings → Routing → L1 authentication**.
+
 To run DHIL-DT locally instead:
 
 ```bash
