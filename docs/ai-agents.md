@@ -2,18 +2,20 @@
 
 AppDarta exposes an MCP server that AI coding agents (OpenCode, Cursor, Claude Code, and others) can connect to for spec-aware code generation.
 
+**Setup (Cursor / Codex step-by-step):** [`ai-agents-mcp-setup.md`](ai-agents-mcp-setup.md)
+
 ## Connect via MCP
 
-Add to your MCP config:
+Add to your MCP config (prefer `--project .` from the vertical root):
 
 ```json
-{"mcpServers": {"appDarta": {"command": "darta", "args": ["mcp", "serve"]}}}
+{"mcpServers": {"darta": {"command": "darta", "args": ["mcp", "serve", "--project", "."]}}}
 ```
 
 Then start the server in your vertical project:
 
 ```bash
-darta mcp serve
+darta mcp serve --project .
 ```
 
 The agent can now read your project specs, check build status, route tasks to the right model tier, and record outcomes back into the framework lifecycle.

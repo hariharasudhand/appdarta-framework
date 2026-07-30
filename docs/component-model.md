@@ -20,17 +20,17 @@ These are compiled and distributed. You do not have access to their source. You 
 
 One binary that does everything:
 
-- **Project lifecycle**: `darta project init`, `darta build project`, `darta test project`, `darta deploy plan`
+- **Project lifecycle**: `darta run-wizard` (recommended after template clone), `darta project init` (alternate), `darta build project`, `darta test project`, `darta deploy plan`
 - **Spec validation**: `darta validate --file`, `--dir`, `--project`
 - **Service management**: `darta services start/stop/ps`, `darta stack up/down`
-- **Configuration**: `darta extend config`
 - **Gateway execution**: `darta gateway serve` — loads your `OrchestrationSpec` and routes agent invocations
+
+Default `darta --help` shows the vertical day-0 surface. Framework/CI commands are hidden but still callable — use `darta help --all` or `DARTA_CLI_SURFACE=full`.
 
 Configure it:
 
 ```bash
 darta gateway serve --listen 0.0.0.0:18110 --project .
-darta extend config --service gateway --key listen --value 0.0.0.0:18110
 ```
 
 ### `appdarta-spec` — Spec Validator

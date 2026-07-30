@@ -27,7 +27,10 @@ Your team then works inside a separate vertical repo. That repo owns the busines
 
 ## Fast Path
 
-Use this when you want the shortest realistic public flow:
+Use this when you want the shortest realistic public flow.
+
+**Recommended entry:** clone the public vertical template → `darta run-wizard`.  
+**Alternate:** `darta project init --name … --domain …` (same skeleton, no clone).
 
 ```bash
 export APPDARTA_HOME="${APPDARTA_HOME:-$HOME/.appdarta}"
@@ -35,12 +38,13 @@ export PATH="$APPDARTA_HOME/bin:$PATH"
 
 bash scripts/install_framework.sh
 
-git clone https://github.com/hariharasudhand/appdarta-vertical-template.git
-cd appdarta-vertical-template
+git clone https://github.com/hariharasudhand/appdarta-vertical-template.git my-vertical
+cd my-vertical
 
 darta version
 darta run-wizard
 darta doctor --skip-stack
+# optional: darta accelerators apply --domain healthcare
 darta project inspect --file .
 darta validate --project .
 darta build project --project .
@@ -53,6 +57,8 @@ That path proves:
 - the template is personalized correctly
 - the project contracts validate
 - the vertical can build and run through the framework lifecycle
+
+MCP for Cursor/Codex: [`ai-agents-mcp-setup.md`](ai-agents-mcp-setup.md). Full CLI: `darta help --all`.
 
 ## DHIL-DT Server
 
@@ -176,9 +182,10 @@ That lets product teams move quickly without rebuilding the AI control plane fro
 
 ## Concrete Validation Path
 
-If you want a real vertical validation scenario rather than a generic quickstart, use the healthcare walkthrough in the public template repo:
+If you want a real vertical validation scenario rather than a generic quickstart:
 
-- [Healthcare Validation Runbook](https://github.com/hariharasudhand/appdarta-vertical-template/blob/master/docs/healthcare-validation-runbook.md)
+- [Vertical Developer Handbook](https://github.com/hariharasudhand/appdarta-vertical-template/blob/master/docs/vertical-developer-handbook.md) — **start here**
+- [Healthcare Validation Runbook](https://github.com/hariharasudhand/appdarta-vertical-template/blob/master/docs/healthcare-validation-runbook.md) — healthcare drill
 
 ## Recommended Day-One Commands
 

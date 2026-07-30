@@ -356,7 +356,7 @@ flowchart TB
 
     UC -->|evaluated at gateway| Decision{Decision}
     Decision -->|pass| Execution
-    Decision -->|escalate| HumanApproval["Human Approval\nPOST /callbacks/approve"]
+    Decision -->|escalate| HumanApproval["Human Approval\nPOST /callbacks/approval"]
     Decision -->|block| Rejection
 ```
 

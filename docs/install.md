@@ -54,6 +54,20 @@ darta --version
 darta framework current
 ```
 
+## After install — start a vertical
+
+**Recommended**
+
+```bash
+git clone https://github.com/hariharasudhand/appdarta-vertical-template.git my-vertical
+cd my-vertical
+darta run-wizard
+```
+
+**Alternate:** `darta project init --name my-vertical --domain <domain>` (same generic skeleton without cloning).
+
+Day-0 walkthrough: [vertical developer handbook §2](../vertical-template/vertical-developer-handbook.md). Cursor/Codex MCP: [`ai-agents-mcp-setup.md`](ai-agents-mcp-setup.md).
+
 ## Connect to a DHIL-DT server
 
 Darta routes AI work through three endpoints on a DHIL-DT server:

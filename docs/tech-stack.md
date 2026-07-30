@@ -59,4 +59,4 @@ Framework specs are JSON Schema (draft-07). The 31 core schemas in `specs/core/`
 | gRPC agent routing | gRPC (declared endpoint + proto-ref) |
 | context-service API | HTTP/JSON (internal) |
 | A2A agent handoff | AppDarta envelope over HTTP |
-| Async callbacks | HTTP webhook (`POST /callbacks/approve`, `/callbacks/resume`) |
+| Async callbacks | HTTP webhook (`POST /callbacks/approval`, `/callbacks/resume`) |

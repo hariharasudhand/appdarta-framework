@@ -140,7 +140,10 @@ That repository is the entry point for vertical developers. It has everything to
 | Evaluation specs | [evals.md](docs/evals.md) |
 | Runtime signals | [signals.md](docs/signals.md) |
 | AI governance and model roles | [ai-governance.md](docs/ai-governance.md) |
+| AI coding agents (tool catalog) | [ai-agents.md](docs/ai-agents.md) |
+| **Cursor / Codex MCP setup** | [ai-agents-mcp-setup.md](docs/ai-agents-mcp-setup.md) |
 | Component model — what's platform, what's yours | [component-model.md](docs/component-model.md) |
+| **Vertical developer handbook** | [../vertical-template/vertical-developer-handbook.md](../vertical-template/vertical-developer-handbook.md) |
 | Framework services reference | [services.md](docs/services.md) |
 | Vertical lifecycle walkthrough | [quickstart.md](docs/quickstart.md) |
 | Multi-instance and tenant isolation | [multi-instance-deployment.md](docs/multi-instance-deployment.md) |
